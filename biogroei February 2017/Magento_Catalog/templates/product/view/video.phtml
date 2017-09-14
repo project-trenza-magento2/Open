@@ -1,0 +1,32 @@
+<?php $_product = $block->getProduct();
+$video = $_product->getResource()->getAttribute('video')->getFrontend()->getValue($_product);
+
+?>
+<div class="youtube" id="<?php if($video) echo $video; ?>" data-params="controls=0&showinfo=0&rel=0"></div>
+<script>
+ require([
+        'jquery'
+        ], function($){
+$(document).ready(function() {
+// START Fast & Agile YouTube Embed by Schoberg.net
+  $(".youtube").each(function() {
+    // Set the BG image from the youtube ID
+    $(this).css('background-image', 'url(//i.ytimg.com/vi/' + this.id + '/hqdefault.jpg)');
+    // Click the video div
+    $(document).delegate('#' + this.id, 'click', function() {
+      // Build embed URL
+      var iframe_url = "//www.youtube.com/embed/" + this.id + "?autoplay=1&autohide=1";
+      // Grab extra parameters set on div
+      if ($(this).data('params')) iframe_url += '&' + $(this).data('params');
+      // Build iframe tag
+      var iframe = $('<iframe/>', {'allowfullscreen':'allowfullscreen', 'frameborder': '0', 'src': iframe_url})
+      // Replace the YouTube thumbnail with YouTube HTML5 Player
+      $(this).append(iframe);
+    });// /click
+  }); // /each video
+// END Fast & Agile YouTube Embed by Schoberg.net
+}); // /document ready
+});
+
+
+</script>

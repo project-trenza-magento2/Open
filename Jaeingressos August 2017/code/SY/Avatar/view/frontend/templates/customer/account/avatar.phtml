@@ -1,0 +1,62 @@
+<?php
+/**
+ * Profile Avatar
+ * 
+ * @author Slava Yurthev
+ */
+ 
+ 
+ 
+ 
+ 
+ $sellerGroupId = $customerId = $customerGroupId = $status = '';
+$urlInterface = \Magento\Framework\App\ObjectManager::getInstance ()->get ( 'Magento\Framework\UrlInterface' );
+$currentUrl = $urlInterface->getCurrentUrl ();
+$objectGroupManager = \Magento\Framework\App\ObjectManager::getInstance ();
+$customerSession = $objectGroupManager->get ( 'Magento\Customer\Model\Session' );
+$customerDatas = $customerSession->getCustomer ();
+if ($customerSession->isLoggedIn ()) {
+ $customerId = $customerSession->getId ();
+ $customerGroupId = $customerDatas->getGroupId ();
+ $customerGroupSession = $objectGroupManager->get ( 'Magento\Customer\Model\Group' );
+ $customerGroupData = $customerGroupSession->load ( $customerGroupId );
+ $sellerGroupCode = $customerGroupData->getCode ();
+ $sellerGroupData = $customerGroupSession->load ( 'Marketplace Seller', 'customer_group_code' );
+ $sellerGroupId = $sellerGroupData->getId ();
+ $customerGroupSession = $objectGroupManager->get ( 'Apptha\Marketplace\Model\Seller' );
+ $status = $customerGroupSession->load ( $customerId, 'customer_id' )->getStatus ();
+}
+
+?>
+<?php
+$objectModelManager = \Magento\Framework\App\ObjectManager::getInstance ();
+$seller = $objectModelManager->get ( 'Apptha\Marketplace\Helper\Data' );
+$assignProduct = $seller->getAssignProduct ();
+$isSellerReviewEnabled = $seller->isSellerReviewEnabled ();
+if ($customerGroupId != $sellerGroupId || $status == 0) {
+?>
+<div class="block block-dashboard-info">
+	<div class="block-title"><strong><?php echo __('My Profile'); ?></strong></div>
+	<div class="block-content">
+		<div class="box box-information">
+			<strong class="box-title">
+				<span><?php echo __('Profile Photo'); ?></span>
+			</strong>
+			<div class="box-content">
+				<img src="<?php echo $this->getAvatar(); ?>" width="150">
+			</div>
+		</div>
+		<div class="box box-newsletter">
+			<strong class="box-title">
+				<span><?php echo __('Upload'); ?></span>
+			</strong>
+			<div class="box-content">
+				<form action="<?php echo $this->getUrl('sy_avatar/manager/upload'); ?>" enctype="multipart/form-data" method="POST">
+					<div><input type="file" name="avatar" accept="image/*"></div>
+					<div style="margin-top:8px;"><button type="submit"><span><span><?php echo __('Save Photo'); ?></span></span></button></div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<?php }?>

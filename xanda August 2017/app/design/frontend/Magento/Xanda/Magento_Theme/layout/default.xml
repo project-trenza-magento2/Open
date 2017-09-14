@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        
+		<referenceBlock name="logo">
+            <arguments>
+				<argument name="logo_file" xsi:type="string">images/logo2.svg</argument>
+            </arguments>
+        </referenceBlock>
+		<referenceBlock name="logo">
+            <arguments>
+                <argument name="logo_img_width" xsi:type="number">256</argument>
+                <argument name="logo_img_height" xsi:type="number">145</argument>
+            </arguments>
+        </referenceBlock>
+		
+		<container name="signin_signout" as="header_customs" label="header custom" htmlTag="div" htmlClass="header-custom-right">
+			<block class="Magento\Framework\View\Element\Template" name="signin_signout_block" template="Magento_Theme::html/signin_signout.phtml">
+			</block>
+		</container>
+		
+		<!--
+		<block class="Magento\Framework\View\Element\Template" name="store.menu" group="navigation-sections" template="Magento_Theme::html/container.phtml">
+			<arguments>
+				<argument name="title" translate="true" xsi:type="string">Menu</argument>
+			</arguments>
+		</block>
+		-->
+		<move element="signin_signout" destination="header-wrapper" after="logo"/>
+		<!-- <move element="store.menu" destination="header-wrapper" after="logo"/> -->
+		
+		<referenceBlock name="footer_links" remove="true" />
+		<referenceBlock name="form.subscribe" remove="true"/>
+    </body>
+</page>

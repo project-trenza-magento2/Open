@@ -1,0 +1,143 @@
+<?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/**  @var $block \Magento\Checkout\Block\Cart */
+?>
+<?php $mergedCells = ($this->helper('Magento\Tax\Helper\Data')->displayCartBothPrices() ? 2 : 1); ?>
+<?php echo $block->getChildHtml('form_before') ?>
+<form action="<?php /* @escapeNotVerified */ echo $block->getUrl('checkout/cart/updatePost') ?>"
+          method="post"
+          id="form-validate"
+          data-mage-init='{"validation":{}}'
+          class="form form-cart">
+    <?php echo $block->getBlockHtml('formkey'); ?>
+    <div class="cart table-wrapper<?php echo $mergedCells == 2 ? ' detailed' : ''; ?>">
+
+            <?php foreach ($block->getItems() as $_item): ?>
+                <?php //echo $block->getItemHtml($_item) ?>
+                
+                <div class="product-information">
+<?php
+     $product_id = $_item->getId();
+    
+?>
+
+    <?php $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$product = $objectManager->create('Magento\Catalog\Model\Product')->load($_item->getId());
+ //echo $product->getThumbnail();
+$imagewidth=200;
+$imageheight=200;
+$imageHelper  = $objectManager->get('\Magento\Catalog\Helper\Image');
+$image_url = $imageHelper->init($product, 'product_page_image_small')->setImageFile($product->getFile())->resize($imagewidth, $imageheight)->getUrl();
+ //echo $image_url
+//echo  $product->getProductUrl(); 
+?>
+    <div class="product-image">
+        <img src="<?php echo $image_url;?>" />
+    </div>
+    <div class="product-information-details">
+        <h3 class="product-title"><?php  echo $_item->getName(); ?></h3>
+        <table border="0" style="max-width: 320px;">
+            <tr>
+                <td> <span><?php echo __('Date');?></span></td>
+                <td><h5><?php  
+                 $date = $product->getData('concert_date');
+                echo $newDate = date("d/m/Y", strtotime($date));
+                ?>
+                </h5></td>
+            </tr>
+            <tr>
+                <td> <span><?php echo __('Category');?></span></td>
+                <td>
+                <h5>
+                    <?php
+                       //echo $product->getAttributeText('attribute_text');
+                    ?>
+                </h5>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><span><?php echo __('Hour');?></span></td>
+                <td><h5>
+                    <?php  
+                        $date = $product->getData('concert_date');
+                        echo $newDate = date("h:m", strtotime($date));
+                     ?>
+                </h5></td>
+            </tr>
+            
+            <tr>
+                <td><span><?php echo __('Sex');?></span></td>
+                <td><h5>
+         
+            <?php  
+                $sex = $product->getData('sex');
+                $attr = $product->getResource()->getAttribute('sex');
+                 if ($attr->usesSource()) {
+                       echo $optionText = $attr->getSource()->getOptionText($sex);
+                 }
+                 
+             ?>
+        </h5></td>
+            </tr>
+            
+            <tr>
+                <td style="padding: 20px 0px !important;"><span><?php echo __('Qty');?></span></td>
+                <td style="padding: 20px 0px !important;">  <div class="field qty" style="    width: 44px;" >
+         
+            <!--<label class="label" for="qty"><span><?php /* @escapeNotVerified */ echo __('Qty') ?></span></label>-->
+            <div class="control">
+                <input type="number"
+                       name="qty"
+                       id="qty"
+                       maxlength="12"
+                       value="<?php  ?>"
+                       />
+            </div>
+        </div></td>
+            </tr>
+            
+            
+        </table>   
+    </div>
+</div>
+                
+                
+            <?php endforeach ?>
+    </div>
+    <div class="cart main actions">
+        <?php if ($block->getContinueShoppingUrl()): ?>
+            <a class="action continue"
+               href="<?php echo $block->escapeUrl($block->getContinueShoppingUrl()) ?>"
+               title="<?php echo $block->escapeHtml(__('Continue Shopping')); ?>">
+                <span><?php /* @escapeNotVerified */ echo __('Continue Shopping') ?></span>
+            </a>
+        <?php endif; ?>
+        <button type="submit"
+                name="update_cart_action"
+                data-cart-empty=""
+                value="empty_cart"
+                title="<?php echo $block->escapeHtml(__('Clear Shopping Cart')); ?>"
+                class="action clear" id="empty_cart_button">
+            <span><?php /* @escapeNotVerified */ echo __('Clear Shopping Cart'); ?></span>
+        </button>
+        <button type="submit"
+                name="update_cart_action"
+                data-cart-item-update=""
+                value="update_qty"
+                title="<?php echo $block->escapeHtml(__('Update Shopping Cart')); ?>"
+                class="action update">
+            <span><?php /* @escapeNotVerified */ echo __('Update Shopping Cart'); ?></span>
+        </button>
+        <input type="hidden" value="" id="update_cart_action_container" data-cart-item-update=""/>
+    </div>
+</form>
+<?php echo $block->getChildHtml('checkout.cart.order.actions') ?>
+<?php echo $block->getChildHtml('shopping.cart.table.after'); ?>
+

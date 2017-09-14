@@ -1,0 +1,223 @@
+
+
+<div class="advance-search-sidebar"> 
+<?php
+    if(isset($_GET['concert_date'])){
+            $from = $_GET['concert_date'];
+            $date_from = $from['from'];
+            $date_to = $from['to'];
+            if($date_from==''){
+                $date_from = '';
+            }else{
+                $date_range = $date_from;
+            }
+            if($date_to ==''){
+                $date_to ='';
+            }else{
+                $date_range = $date_to;
+            }
+            
+            if($date_to !='' && $date_from!=''){
+                $date_range = $date_from.' - '.$date_to;
+            }
+            
+            //$adv_take= '06/1/2017 - 06/17/2017';
+        }else{
+            $date_from ='';
+            $date_to ='';
+            $date_range ='';
+        }
+        
+        if(isset($_GET['price'])){
+            $price = $_GET['price'];
+            $price_to = $price['to'];
+            $price_from = $price['from'];
+            if($price_to==''){
+                $price_to = '';
+            }
+            if($price_from==''){
+                $price_from = '';
+            }
+            
+        }else{
+            $price_from = '';
+            $price_to = '';
+        }
+        
+        if(isset($_GET['cat'])){
+            $cat = $_GET['cat'];
+        }
+         else{
+            $cat = '';
+                    
+         } 
+        //echo $date_to.'=>'.$date_from.'=>'.$date_range;
+    ?>
+<form id="custom-form" class="form search advanced" action="<?php echo $this->getUrl('catalogsearch/advanced/result') ?>" method="get" enctype="multipart/form-data" class="form" >
+<input type="hidden" name="cat" value="<?php echo $cat; ?>" />
+<input type="hidden" name="concert_date[from]" id="date_from" value="<?php echo $date_from; ?>" />
+<input type="hidden" name="concert_date[to]" id="date_to" value="<?php echo $date_to; ?>" />
+    <div class="price">
+        <h3><span><?php echo __('price');?></span></h3>
+        <div class="price-from">
+            <label class="price-sign">R$</label>
+            <input name="price[from]" type="number" placeholder="00.00" value="<?php echo $price_from;?>"/>
+        </div>
+        <div class="price-to">
+            <label class="price-sign">R$</label>
+            <input name="price[to]" type="number" placeholder="00.00" value="<?php echo $price_to;?>"/>
+        </div>
+        <button type="submit">search</button>
+    </div>
+    
+   
+    
+    <div class="sex-type">
+    <h3><span><?php echo __('sexo');?></span></h3>
+    <?php
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            $attr_code = 'sexo';
+            $attribute = $objectManager->create('\\Magento\\Catalog\\Model\\Product\\Attribute\\Repository')->get($attr_code);
+            $options = $attribute->getOptions();
+           
+            if($options){
+            $i = 0;
+                foreach($options as $option){
+                    if($i!=0){
+                    $optionText = $option->getLabel();
+                    $optionId = $attribute->getSource()->getOptionId($optionText);
+                    if(isset($_GET['sexo'])){
+                      $sex =  $_GET['sexo'];
+                      foreach($sex as $v){
+                        $arr[] = $v;
+                      }
+                    }else{
+                        $arr[] = 0;
+                    }
+                    if(in_array($optionId, $arr)){
+                         echo '<input type="checkbox" name="sexo[]" value="'.$optionId.'" id="option1'.$i.'" onChange="this.form.submit()" checked><label class="checkbox inline" for="option1'.$i.'">'.trim($option->getLabel()," ").'</label><br>';       
+                    }else{
+                        echo '<input type="checkbox" name="sexo[]" value="'.$optionId.'" id="option1'.$i.'" onChange="this.form.submit()"><label class="checkbox inline" for="option1'.$i.'">'.trim($option->getLabel()," ").'</label><br>';       
+                    }
+                      
+                    
+                    
+                    }
+                $i++;
+                }
+            }
+        ?>
+       </div> 
+
+  
+    
+    
+    
+    
+    
+    
+    <select class="select-location" name="busca_por_cidade" style="display:none">
+        <?php
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            $attr_code = 'busca_por_cidade';
+            $attribute = $objectManager->create('\\Magento\\Catalog\\Model\\Product\\Attribute\\Repository')->get($attr_code);
+            $options = $attribute->getOptions();
+            if($options){
+                $select = 0;
+                $i = 0;
+                        echo '<option value="0" selected>Busca por cidade</option>';
+                        foreach($options as $option){
+                            if($i !=0){
+                        	$optionText = $option->getLabel();
+                            $optionId = $attribute->getSource()->getOptionId($optionText);
+                            if(isset($_GET[$attr_code])){
+                                if($_GET[$attr_code] == $optionId){
+                                    $select = 1;
+                                }else{
+                                    $select = 0;
+                                }
+                            }
+                            
+                        	if($select==1){
+                        	   echo '<option value="'.$optionId.'" selected>'.$option->getLabel().'</option>';
+                        	}else{
+                        	echo '<option value="'.$optionId.'">'.$option->getLabel().'</option>';
+                            
+                        	}  
+                            }   
+                            $i++;      
+                        }
+            }
+        ?>
+    </select>
+    <select name="busca_por_ingresso" class="select-city" style="display:none"> 
+      <?php
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $attr_code = 'busca_por_ingresso';
+        $attribute = $objectManager->create('\\Magento\\Catalog\\Model\\Product\\Attribute\\Repository')->get($attr_code);
+        $options = $attribute->getOptions();
+        if($options){
+                        $select = 0;
+                        $i = 0;
+                        echo '<option value="0" selected>Busca por ingresso</option>';
+                        foreach($options as $option){
+                        if($i !=0){    
+                    	$optionText = $option->getLabel();
+                        $optionId = $attribute->getSource()->getOptionId($optionText);
+                        if(isset($_GET[$attr_code])){
+                            if($_GET[$attr_code] == $optionId){
+                                $select = 1;
+                            }else{
+                                $select = 0;
+                            }
+                        }
+                        
+                    	if($select==1){
+                    	   echo '<option value="'.$optionId.'" selected>'.$option->getLabel().'</option>';
+                    	}else{
+                    	echo '<option value="'.$optionId.'">'.$option->getLabel().'</option>';
+                        
+                    	}
+                
+                        }
+                        $i++;
+                        }
+                        
+                    }
+        
+        ?>
+    </select>
+    <div class="select-date">
+        <input id="dtpicker" name="date" type="hidden" placeholder="Busca por data"/>
+    </div>
+    
+</form>
+</div>
+<script type="text/javascript">
+ require([
+    "jquery"
+    ], function($){
+    
+        //$('.advance-searchn select').selectric();
+
+
+
+       
+        
+
+        
+  });
+  
+  require([ 'jquery', 'jquery/ui'], function($){
+     jQuery("#dtpicker").daterange(
+        //{
+            //onClose: function (dateRangeText) {
+               // jQuery("#d").after("<p>" + dateRangeText + "</p>");
+            //}
+       // }
+        );
+
+  });
+  
+</script>
+

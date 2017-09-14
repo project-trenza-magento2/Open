@@ -1,0 +1,63 @@
+<?php 
+    $objectManager =  \Magento\Framework\App\ObjectManager::getInstance();        
+     
+
+    $categoryFactory = $objectManager->get('\Magento\Catalog\Model\CategoryFactory');
+    $categoryHelper = $objectManager->get('\Magento\Catalog\Helper\Category');
+    $categoryRepository = $objectManager->get('\Magento\Catalog\Model\CategoryRepository');
+     
+    $categoryId = 3; # CATEGORY ID
+    $category = $categoryFactory->create()->load($categoryId);
+
+    #var_dump($category->getData());
+    #$parentCategories = $category->getParentCategories();
+    #$storeCategories = $categoryHelper->getStoreCategories();
+    
+    $childrenCategories = $category->getChildrenCategories();
+?>
+<h3>Which New Experience Will Be Yours?</h3>
+<ol id="categoryslider" class="owl-carousel owl-theme product-items">
+    <?php foreach ($childrenCategories as $subCate): ?>
+    <?php 
+        $cat_name = $subCate->getName();
+        $subCate->getId();
+        $sub_category = $categoryFactory->create()->load($subCate->getId());
+    ?>
+    <?php if ($_imgUrl = $sub_category->getImageUrl()): ?>
+    <li class="product-item">
+      <div class="product-item-info">
+        <a class="product-item-photo" href="<?php echo $sub_category->getUrl(); ?>">
+            <img src="<?php echo $_imgUrl ?>" alt=""/>
+            <h4><?php echo $cat_name; ?></h4>
+        </a>
+      </div>
+    </li>
+    <?php endif; ?>
+    <?php endforeach; ?>
+</ol>
+<script>
+    require([
+    'jquery'
+    ], function ($) {
+            jQuery(document).ready(function() {
+                var owl = jQuery("#categoryslider");
+              owl.owlCarousel({
+                     responsive: {
+                      0: {
+                        items: 2
+                      },
+                      600: {
+                        items: 3
+                      },
+                      1000: {
+                        items: 4
+                      }
+                    },
+                  nav:true,
+                   dots: false,
+                   margin: 20
+                 
+              });
+            });
+    });
+</script>

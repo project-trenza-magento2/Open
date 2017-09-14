@@ -1,0 +1,424 @@
+<?php
+/**
+ * Apptha
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.apptha.com/LICENSE.txt
+ *
+ * ==============================================================
+ *                 MAGENTO EDITION USAGE NOTICE
+ * ==============================================================
+ * This package designed for Magento COMMUNITY edition
+ * Apptha does not guarantee correct work of this extension
+ * on any other Magento edition except Magento COMMUNITY edition.
+ * Apptha does not provide extension support in case of
+ * incorrect edition usage.
+ * ==============================================================
+ *
+ * @category    Apptha
+ * @package     Apptha_Marketplace
+ * @version     1.2
+ * @author      Apptha Team <developers@contus.in>
+ * @copyright   Copyright (c) 2017 Apptha. (http://www.apptha.com)
+ * @license     http://www.apptha.com/LICENSE.txt
+ *
+ */
+?>
+<?php
+    if (!isset($_GET['promo'])) {
+?>
+
+<?php
+
+    $searchProductName = $this->getRequest ()->getParam ( 'name' );
+    $searchProductStatus = $this->getRequest ()->getParam ( 'status' );
+    $searchProductPrice = $this->getRequest ()->getParam ( 'price' );
+    $searchProductSku = $this->getRequest ()->getParam ( 'sku' );
+    $searchProductType = $this->getRequest ()->getParam ( 'type' );
+    $delete = $this->getRequest ()->getParam ( 'multi' );
+    $entityIds = $this->getRequest ()->getParam ( 'id' );
+    $multisubmit = $this->getRequest ()->getParam ( 'multi_submit' );
+    $productDeleteOption = $block->getProductDeleteApproval ();
+    $productBulkOption = $block->getProductBulkApproval ();
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance ();
+    $dataHelper = $objectManager->get ( 'Apptha\Marketplace\Helper\Data' );
+
+?>
+<div class="sale-topbar">
+    <div class="sale-title"><?php echo iconv('ISO-8859-1', 'UTF-8', __('For sale')); ; ?></div>
+    <div class="sale-enable">
+        <ul>
+            <li><a href="javascript:void(0)" id="enable-product"><?php echo __('Enabled'); ?></a></li>
+            <li><a id="disable-product" href="javascript:void(0)"><?php echo __('Disabled'); ?></a></li>
+        </ul>
+</div>
+</div>
+
+<div class="manage-wrapper">
+<div class="product-manage">
+
+    <div id="filter_div" class="deactive">
+        <form class="form search" action="" id="search-form"
+            method="post">
+
+  <?php if($productDeleteOption == 1){ ?>
+  <div class="mp_action" style="display: block;">
+                <b><?php echo __('Action'); ?> </b> 
+                <select name="multi" class="multi-action" id="multi">
+                    <option name="" value="Select an option"><?php echo __('Select an option'); ?></option>
+                    <option name="delete" value="delete"><?php echo __('Delete'); ?></option>
+                </select>
+                <div class="form_submit_btn">
+                    <button type="submit" class="button multi_submit"
+                        onclick="document.getElementById('multi_submit').value='1'; "
+                        title="<?php echo __('Submit') ?>"
+                        name="multi_submit" id="multi_submit">
+                        <span><span><?php echo __('Submit') ?></span></span>
+                    </button>
+                </div>
+  </div>
+        <script>
+                require([
+                         "jquery",
+                         "mage/calendar"
+                     ], function($){
+                    var selectoption;
+                        $('.multi_submit').click(function() {  
+                        selectoption=$("#multi option:selected").val();
+                        if(selectoption=="delete"){
+                                  if($('.product-ids').is(":checked")){
+                                         return true;  
+                                   }
+                                   else{
+                                       alert("Please Select Products");
+                                       return false;
+                                    }
+                           }
+                           else{
+                                alert("Please Select Option");
+                                return false;
+                           }
+                         });
+                         
+                    search_form_submit($x){
+                        if($x == 'enable'){
+                            alert('ok');
+                        }
+                    }
+                
+            });
+        </script>
+    <?php } ?>
+    
+    <fieldset class="fieldset">
+        <div class="fieldset_form">
+            <div class="field name ">
+                <label class="label" for="name"><span><?php echo __('Name') ?></span></label>
+                <div class="control">
+                    <input name="name" id="name"
+                        title="<?php echo __('Name') ?>"
+                        class="input-text" type="text"
+                        value="<?php if($searchProductName != "") {echo $searchProductName; } ?>" />
+                </div>
+            </div>
+            <div class="field name ">
+                <label class="label" for="status"><span><?php echo __('Status') ?></span></label>
+                <div class="control">
+                    <select name="status" class="select"
+                        id="status">
+                        <option value=""><?php echo __('All'); ?></option>
+                        <option value="1"
+                            <?php if($searchProductStatus != "" && $searchProductStatus == '1') {echo 'selected="selected"';}?>><?php echo __('Enabled'); ?></option>
+                        <option value="2"
+                            <?php if($searchProductStatus != "" && $searchProductStatus == '2') {echo 'selected="selected"';}?>><?php echo __('Disabled'); ?></option>
+                    </select>
+                </div>
+            </div>
+            <div class="field type ">
+                <label class="label" for="type"><span><?php echo __('Type') ?></span></label>
+                <div class="control">
+                    <select name="type" class="select" id="type">
+                        <option value=""><?php echo __('All'); ?></option>
+                        <option value="simple"
+                            <?php if($searchProductType != "" && $searchProductType == "simple") {echo 'selected="selected"';}?>><?php echo __('Simple'); ?></option>
+                        <option value="virtual"
+                            <?php if($searchProductType != "" && $searchProductType == "virtual") {echo 'selected="selected"';}?>><?php echo __('Virtual'); ?></option>
+                    </select>
+                </div>
+            </div>
+            <div class="field price ">
+                <label class="label" for="price"><span><?php echo __('Price') ?></span></label>
+                <div class="control">
+                    <input type="text" name="price" id="price"
+                        class="input-text"
+                        value="<?php if($searchProductPrice != "") { echo $searchProductPrice; }?>" />
+                </div>
+            </div>
+            <div class="field sku ">
+                <label class="label" for="sku"><span><?php echo __('SKU') ?></span></label>
+                <div class="control">
+                    <input type="text" name="sku" id="sku"
+                        class="input-text"
+                        value="<?php if($searchProductSku != "") { echo $searchProductSku; }?>" />
+                </div>
+            </div>
+        </div>
+        <button type="submit" title="<?php echo __('Search') ?>"
+            class="product-search"><?php echo __('Search');?></button>
+    </fieldset>
+    <div class="product-url">
+        <a href="<?php echo $block->getAddProductUrl(); ?>"
+            class="action submit primary"><?php echo __('Add New Product'); ?></a>
+    </div>
+            
+            
+            
+    <?php
+        $productCollection = $block->getCollection ();
+        if ($productCollection->getSize () > 0) {
+    ?>
+      <div class="toolbar top">
+         <?php echo $block->getPagerHtml(); ?>
+      </div>
+            <table class="manage-product-table">
+     
+      <?php foreach ($productCollection as $product){ ?>     
+      <tr>
+      <td class="prd-image"> 
+      <?php
+        $imagehelper = $this->helper ( 'Magento\Catalog\Helper\Image' );
+        $productImage = $imagehelper->init ( $product, 'category_page_list' )->constrainOnly ( FALSE )->keepAspectRatio ( TRUE )->keepFrame ( FALSE )->resize ( 160 )->getUrl ();
+        ?> 
+       <?php if($product->getStatus() == 1){?>
+      <a href="<?php echo $product->getProductUrl(); ?>"
+                        title="<?php echo $product->getName(); ?>"> <img
+                            src="<?php echo $productImage; ?>" />
+                    </a>  <?php
+        } else {
+            ?>
+      <img src="<?php echo $productImage; ?>" />
+      <?php }?>
+      </td>
+                    <td class="prd-center">
+      <?php if($product->getStatus() == 1){?>
+      <a href="<?php echo $product->getProductUrl(); ?>"><?php echo $product->getName(); ?></a><?php
+        } else {
+            echo $product->getName ();
+        }
+        ?>
+            <div class="dp-wrap">
+                <div class="dp-date">
+                <?php 
+                    $datetime =  $product->getconcert_date(); 
+                    echo $newDate = date("d/m/Y", strtotime($datetime));
+                ?>
+                </div>
+                <div class="dp-price">
+                    <?php
+                        $productPrice = $objectManager->get ( 'Apptha\Marketplace\Block\Seller\Displayseller' )->getProductPrice ( $product );
+                        echo $productPrice;
+                    ?>
+                </div>
+            </div>
+        
+            <div class="edit-delete mobile"><a class="product-manage-edit" href="<?php echo $block->getPrductEditUrl($product->getId()); ?>"><?php echo __('Edit'); ?></a>
+                  <?php if($productDeleteOption){?>
+                  <a class="product-manage-delete"
+                                    href="<?php echo $block->getProductDeleteUrl($product->getId()); ?>"
+                                onclick="return confirm('<?php
+                    /**
+                     * confirming message before delete
+                     */
+                    echo __ ( 'Are you sure want to delete?' );
+                    ?>');"><?php echo __('Delete'); ?></a>
+                    <?php }?>
+              </div>
+        </td>
+
+        <td class="edit-delete"><a class="product-manage-edit" href="<?php echo $block->getPrductEditUrl($product->getId()); ?>"><?php echo __('Edit'); ?></a>
+      
+      <?php if($productDeleteOption){?>
+      <a class="product-manage-delete"
+                        href="<?php echo $block->getProductDeleteUrl($product->getId()); ?>"
+                        onclick="return confirm('<?php
+            /**
+             * confirming message before delete
+             */
+            echo __ ( 'Are you sure want to delete?' );
+            ?>');"><?php echo __('Delete'); ?></a>
+            <?php }?>
+      </td>
+                </tr>
+      <?php } ?>
+      </table>
+      <div class="toolbar-bottom">
+         <div class="toolbar bottom">
+            <?php echo $block->getPagerHtml(); ?>
+         </div>
+      </div>
+        <?php }else{ ?> 
+     <br />
+     <p><?php echo __("We couldn't find any records."); ?></p>
+   <?php } ?>
+   </div>
+   </form>
+</div>
+</div>
+<?php
+/**
+ * Bulk product upload form
+ */
+?>
+<?php if($productBulkOption){ ?>
+<form name="bulk-product-upload-form" id="bulk-product-upload-form"
+    class="bulk-product-upload-form"
+    onsubmit="return bulkProductUploadValidate(this);" method="post"
+    action="<?php echo $this->getBulkUploadUrl(); ?>"
+    enctype="multipart/form-data">
+    <label for="bulk-product-upload-csv-file"
+        class="required bulk-product-upload-csv-file"><?php echo __('Upload CSV File'); ?></label>
+    <div class="input-box">
+        <input type="file"
+            class="required-file bulk-product-upload-file"
+            id="bulk-product-upload-csv-file"
+            name="bulk-product-upload-csv-file" accept=".csv" />
+    </div>
+    <label for="bulk-product-upload-image-file"
+        class="bulk-product-upload-image-file"><?php echo __('Upload Image File'); ?></label>
+    <div class="input-box">
+        <input type="file" class="bulk-product-upload-file"
+            id="bulk-product-upload-image-file"
+            name="bulk-product-upload-image-file" accept=".zip" />
+        <div>
+            <small><?php echo __('Upload .zip format'); ?></small>
+        </div>
+    </div>
+
+    <button type="submit" class="button bulk-upload-submit"
+        title="<?php echo __('Upload') ?>" name="bulk-upload-submit"
+        id="bulk-upload-submit" class="bulk-upload-submit">
+        <span><span><?php echo __('Upload') ?></span></span>
+    </button>
+<?php } ?>
+<script type="text/javascript">
+require(['jquery'], function($){
+    jQuery('#enable-product').click(function(){
+       jQuery('#status').val('1');
+       jQuery('#search-form').submit();
+    });
+    
+     jQuery('#disable-product').click(function(){
+       jQuery('#status').val('2');
+       jQuery('#search-form').submit();
+    });
+    
+}); 
+</script>
+
+<?php } if (isset($_GET['promo'])) { ?>
+     
+     <?php 
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
+        $message_model = $objectManager->create('Trenza\Message\Model\Message');
+        $store = $objectManager->create('Magento\Store\Model\StoreManagerInterface');
+        $message =  $block->getLayout()->createBlock('Trenza\Message\Block\Message');
+        $customerSession = $objectManager->get('Magento\Customer\Model\Session');
+        $customer_id = $customerSession->getId ();
+        $store_mail = $this->helper('Trenza\Message\Helper\Data')->getConfig('trans_email/ident_general/email');
+     ?>
+     
+     <?php   
+        if($message->is_customer_seller($customer_id) == 'seller'){
+            
+            $imageBlock =  $block->getLayout()->createBlock('Apptha\Marketplace\Block\Seller\Profile');
+            $sellerProfileDetails = $imageBlock->getSellerProfilebyid ($customer_id);
+            $sellerDetails = $sellerProfileDetails ['seller_details'];
+            $countryDatas = $sellerProfileDetails ['country_list'];
+            $logoImage = $sellerProfileDetails ['logo_image'];
+            $bannerImage = $sellerProfileDetails ['banner_image'];
+            $sender_name = $sellerDetails->getStoreName();
+            $email = $sellerDetails->getEmail();
+        }else{
+            $customerObj = $objectManager->create('Magento\Customer\Model\Customer')->load($customer_id); 
+            $sender_name = $customerObj->getFirstname();
+            $email = $sellerDetails->getEmail();
+        }
+    ?>
+    <div class="sale-topbar">
+        <div class="sale-title"><?php echo __('Promo'); ?></div>
+    </div>
+    <?php //echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('promo-block')->toHtml();?>
+     <div class="promo-wrapper">
+        <div class="promo-item clear-fix">
+            <div class="left-promo">
+                <h3>Anuncie seu evento</h3>
+                <?php echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('promo-block')->toHtml();?>
+                <!--<p><?php //echo iconv('ISO-8859-1', 'UTF-8',  'Solicite um orçamento para incluir o seu ingresso no Banner da página inicial. Será uma ótima oportunidade para divulgar o seu evento e vender muitos ingressos!!! ;-)'); ?></p>-->
+            </div>
+            <div class="right-promo"><button class="action primary sendmailtoadmin">Solicitar Or&ccedil;amento</button></div>
+        </div>
+        <div class="row-item-popup sendmailtoadmin_show">
+            <div class="send-message">
+                <h3 class="product-title">Envie uma mensagem</h3>
+                <form id="messagesend" action="<?php echo $this->getUrl('message/index/sendmail/'); ?>" method="post">
+                	<textarea name="message" id="message"></textarea>
+                    <input type="hidden" name="sender_email" value="<?php echo $email; ?>">
+                    <input type="hidden" name="sender_name" value="<?php echo $sender_name; ?>">
+                    <input type="hidden" name="store_mail" value="<?php echo $store_mail; ?>">
+                    <button href="#" class="button send" onclick="validation();ajaxmessage('popup','messagesend','<?php echo $this->getUrl('message/index/sendmail/'); ?>'); return false;"> Enviar</button>
+                </form>
+                <div for="comment" generated="true" class="mage-error" id="message-error" style="display: none;"><font><font>This field is required.</font></font></div>
+            </div>
+        </div>
+        
+     </div>
+     
+     <div class="element_to_pop_up element_to_pop_up3" id="popup" style="display: none; background: #fff; width: 845px; height: 600px;">
+        <div class="close">X</div>
+        <div class="content">
+        <div class="loading-text" style="display: none;"></div>
+        <div class="element_to_pop_up2 message_pop_up" style="display: none;">
+                <div class="icon-success"></div>
+                <div class="success-text"><?php /* @escapeNotVerified */ echo __('Massage successfully Send!'); ?></div>
+                <div class="close-button close" onclick="return btntest_onclick()"><?php /* @escapeNotVerified */ echo __('close'); ?></div>
+        </div>
+        
+        <div class="element_to_pop_up2 message_pop_up fail" style="display: none;">
+                <div class="icon-fail"></div>
+                <div class="success-text"><?php /* @escapeNotVerified */ echo __('Fail! Please Try Again Later'); ?></div>
+                <div class="close-button close" onclick="return btntest_onclick()"><?php /* @escapeNotVerified */ echo __('close'); ?></div>
+        </div>
+        
+        </div>
+    </div>
+<script type="text/javascript">
+    require(['jquery'], function($){
+        jQuery('.sendmailtoadmin').click(function(){
+           jQuery(this).toggleClass('active'); 
+           jQuery('.sendmailtoadmin_show').toggleClass('active'); 
+        });
+        
+    }); 
+    
+    
+    function validation(){
+        var error = document.getElementById("message-error");
+        
+        var x = document.getElementById('message').value;
+        if(x == ''){
+            error.classList.add("show");
+            return false;
+        }else{
+            error.classList.remove("show");
+        }
+    }
+    
+    function btntest_onclick(){
+        window.location.href=window.location.href
+    }
+</script>  
+<?php } ?>

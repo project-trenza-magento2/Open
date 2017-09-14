@@ -1,0 +1,7 @@
+<div class="category-custom-title">
+    <?php 
+       $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+       $category = $objectManager->get('Magento\Framework\Registry')->registry('current_category');//get current category
+    ?>
+    <h1> <?php echo $category->getName(); ?></h1>
+</div>

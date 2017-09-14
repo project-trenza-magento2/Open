@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="header.panel">
+            <block class="Magento\Framework\View\Element\Html\Links" name="header.links">
+                <arguments>
+                    <argument name="css_class" xsi:type="string">header links</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+
+		<referenceBlock name="logo">
+            <arguments>
+				<argument name="logo_file" xsi:type="string">images/logo2.svg</argument>
+            </arguments>
+        </referenceBlock>
+
+		<referenceBlock name="logo">
+            <arguments>
+                <argument name="logo_img_width" xsi:type="number">256</argument>
+                <argument name="logo_img_height" xsi:type="number">145</argument>
+            </arguments>
+        </referenceBlock>
+
+		<referenceContainer name="header.container">
+			<referenceContainer name="header-wrapper">
+        <block class="Magento\Framework\View\Element\Template" after="logo" name="headerlogin" template="Magento_Theme::headerlogin.phtml"/>
+			</referenceContainer>
+        </referenceContainer>
+
+
+
+		<referenceContainer name="page.bottom.container">
+
+				<block class="Magento\Cms\Block\Block" name="usp">
+					<arguments>
+						<argument name="block_id" xsi:type="string">usp</argument>
+					</arguments>
+				</block>
+
+		</referenceContainer>
+
+        <referenceContainer name="footer">
+			<block class="Magento\Cms\Block\Block" name="footer-text">
+				<arguments>
+					<argument name="block_id" xsi:type="string">footer-text</argument>
+				</arguments>
+			</block>
+
+			<block class="Magento\Cms\Block\Block" name="footer-klantservice1">
+				<arguments>
+					<argument name="block_id" xsi:type="string">footer-klantservice1</argument>
+				</arguments>
+			</block>
+			<block class="Magento\Cms\Block\Block" name="footer-klantservice2">
+				<arguments>
+					<argument name="block_id" xsi:type="string">footer-klantservice2</argument>
+				</arguments>
+			</block>
+
+			<block class="Magento\Framework\View\Element\Template" name="myaccount-footer" as="myaccount-footer" template="Magento_Theme::home/myaccount-footer.phtml" after="footer-klantservice2">
+			   <arguments>
+				  <argument translate="true" name="title" xsi:type="string">Myaccount footer</argument>
+				</arguments>
+			</block>
+
+			<block class="Magento\Cms\Block\Block" name="footer-contact" after="myaccount-footer">
+				<arguments>
+					<argument name="block_id" xsi:type="string">footer-contact</argument>
+				</arguments>
+			</block>
+
+            <block class="Magento\Store\Block\Switcher" name="store_switcher" as="store_switcher" after="footer_links" template="switch/stores.phtml"/>
+			<referenceBlock name="footer_links" remove="true" />
+        </referenceContainer>
+        <referenceBlock name="report.bugs" remove="true"/>
+        <move element="copyright" destination="before.body.end"/>
+
+
+		<referenceBlock name="form.subscribe" remove="true" />
+		<referenceBlock name="copyright" remove="true" />
+
+
+		<referenceBlock name="header.panel" remove="true"/>
+
+		<block class="Magento\Cms\Block\Block" name="hw_footer_payment">
+			<arguments>
+				<argument name="block_id" xsi:type="string">footer_payment</argument>
+			</arguments>
+		</block>
+
+		<move element="hw_footer_payment" destination="before.body.end" before="copyright"/>
+
+
+		<block class="Magento\Cms\Block\Block" name="footer-bottom">
+			<arguments>
+				<argument name="block_id" xsi:type="string">footer-bottom</argument>
+			</arguments>
+		</block>
+
+		<move element="footer-bottom" destination="before.body.end" before="hw_footer_payment"/>
+
+		<container name="header_custom_block" as="header_customs" label="header custom" htmlTag="div" htmlClass="header-custom-right">
+			<block class="Magento\Cms\Block\Block" name="header_custom">
+				<arguments>
+					<argument name="block_id" xsi:type="string">second_nav</argument>
+				</arguments>
+			</block>
+		</container>
+
+		<move element="header_custom_block" destination="store.menu"/>
+
+    </body>
+</page>

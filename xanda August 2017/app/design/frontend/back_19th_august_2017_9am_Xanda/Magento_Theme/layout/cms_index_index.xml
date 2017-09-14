@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+	<referenceContainer name="full-wrapper">
+		<container name="appblock" as="appblock"  htmlTag="div" htmlClass="home-main-slider" after="-">
+			<block class="Magestore\Bannerslider\Block\SliderItem">
+				<action method="setSliderId">
+					<argument name="sliderId" xsi:type="string">1</argument>
+				</action>
+			</block> 
+		</container>
+	</referenceContainer>
+	
+	
+	<referenceContainer name="content">
+	
+		<container name="down_payment" htmlTag="div" htmlClass="down-payment" after="-">
+			<block class="Magento\Cms\Block\Block" name="down_payment_block">
+				<arguments>
+					<argument name="block_id" xsi:type="string">down_payment</argument>
+				</arguments>
+			</block>
+		</container>
+		
+		<container name="categoryslider" htmlTag="div" htmlClass="category-slider" after="down_payment">
+			<block class="Magento\Framework\View\Element\Template" name="categoryslider_block" template="Magento_Theme::html/categoryslider.phtml">
+			   <arguments>
+				  <argument translate="true" name="title" xsi:type="string">Category Slider</argument>
+				</arguments>
+			</block>
+		</container>
+		
+	</referenceContainer>
+	
+	
+	<referenceContainer name="full-wrapper-bottom">
+		<container name="brandslider" as="brandslider"  htmlTag="div" htmlClass="home-main-brand-slider" after="-">
+			<block class="Magento\Framework\View\Element\Template" name="brandslider_block" template="Magento_Theme::html/brandslider.phtml">
+			   <arguments>
+				  <argument translate="true" name="title" xsi:type="string">Brands Slider</argument>
+				</arguments>
+			</block>
+		</container>
+	</referenceContainer>
+	
+</page>

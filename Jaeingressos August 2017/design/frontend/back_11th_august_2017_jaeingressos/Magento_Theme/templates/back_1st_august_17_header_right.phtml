@@ -1,0 +1,171 @@
+<?php
+$sellerGroupId = $customerId = $customerGroupId = $status = '';
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$customerSession = $objectManager->get('Magento\Customer\Model\Session');
+$objectModelManager = \Magento\Framework\App\ObjectManager::getInstance ();
+$customerId = $block->getRequest ()->getParam ( 'id' );
+$sellerDatas = $objectModelManager->get ( 'Apptha\Marketplace\Model\Seller' );
+$sellerDetails = $sellerDatas->load ( $customerId, 'customer_id' );
+$logoName = $sellerDetails->getLogoName ();
+$logoImage = $objectModelManager->get ( 'Magento\Store\Model\StoreManagerInterface' )->getStore ()->getBaseUrl ( \Magento\Framework\UrlInterface::URL_TYPE_MEDIA ) . 'Marketplace/Seller/Resized';
+
+$objectGroupManager = \Magento\Framework\App\ObjectManager::getInstance ();
+$customerDatas = $customerSession->getCustomer ();
+if ($customerSession->isLoggedIn ()) {
+    $customerId = $customerSession->getId ();
+    $customerGroupId = $customerDatas->getGroupId ();
+    $customerGroupSession = $objectGroupManager->get ( 'Magento\Customer\Model\Group' );
+    $customerGroupData = $customerGroupSession->load ( $customerGroupId );
+    $sellerGroupCode = $customerGroupData->getCode ();
+    $sellerGroupData = $customerGroupSession->load ( 'Marketplace Seller', 'customer_group_code' );
+    $sellerGroupId = $sellerGroupData->getId ();
+    $customerGroupSession = $objectGroupManager->get ( 'Apptha\Marketplace\Model\Seller' );
+    $status = $customerGroupSession->load ( $customerId, 'customer_id' )->getStatus ();
+}
+$trenza = $block->getLayout()->createBlock('Trenza\Message\Block\Message');
+$is_seller = $trenza->is_customer_seller($customerId);
+/* Profile Photo Block */
+$avatar = $block->getLayout()->createBlock('SY\Avatar\Block\Customer\Account\Avatar');
+$message = $block->getLayout()->createBlock('Trenza\Message\Block\Message');
+$new_message = $message->message_unread_count($customerId);
+?>
+<ul>
+<li class="icon-cart"><a href="<?php echo $this->getUrl() ?>checkout/cart">Cart
+    <?php
+        $cart = $objectManager->get('\Magento\Checkout\Model\Cart');
+     
+        if($totalItems = $cart->getQuote()->getItemsCount()>0){
+            echo '<span>' . $totalItems = $cart->getQuote()->getItemsCount() . '</span>';
+        }
+     ?>
+     
+    </a></li>
+    <?php if($customerSession->isLoggedIn()) { ?>
+    
+    <li class="icon-mail"><a href="/message">Email<span><?php echo $new_message; ?></span></a></li>
+    <li class="user-profile-icon">
+        <a href="#">
+        <?php if($is_seller=="seller"): ?>
+        <?php if($logoName!=""){?>
+        
+        <img src="<?php echo $logoImage.$logoName;?>" alt="store logo" class="market_place_store_img_logo" />
+        <?php } else{?>
+        <!--  <img src="<?php echo $block->getViewFileUrl('Apptha_Marketplace::images/no-store-logo.png');?>" />-->
+        	<img src="<?php echo $avatar->getAvatar(); ?>"/>
+        <?php  }?>
+        <?php  else: ?>
+        <img src="<?php echo $avatar->getAvatar(); ?>" />
+        <?php  endif;?>
+        </a>
+      
+      <div class="user-acoount-wrapper">
+        <ul class="user-acoount">
+        <?php   if ($customerGroupId != $sellerGroupId || $status == 0) { ?>
+            <li class="my-profile"><a href="<?php echo $this->getUrl() ?>customer/account"><?php echo __('My profile'); ?></a></li>
+            <li class="my-favorite"><a href="<?php echo $this->getUrl() ?>wishlist"><?php echo __('Favorite'); ?></a></li>
+            <li class="my-configuration"><a href="<?php echo $this->getUrl() ?>customer/account/edit"><?php echo __('Settings'); ?></a></li>
+            <li class="my-logout"><a href="<?php echo $this->getUrl() ?>customer/account/logout"><?php echo __('Log out'); ?></a></li>
+         <?php } else if ($customerGroupId != $sellerGroupId || $status == 1) { ?>
+         <li class="my-profile"><a href="<?php echo $this->getUrl() ?>customer/account"><?php echo __('My profile'); ?></a></li>
+            <li class="my-sales"><a href="<?php echo $this->getUrl() ?>marketplace/product/manage"><?php echo __('My sales'); ?></a></li>
+            <li class="my-wallet"><a href="<?php echo $this->getUrl() ?>"><?php echo __('My wallet'); ?></a></li>
+            <li class="my-favorite"><a href="<?php echo $this->getUrl() ?>wishlist"><?php echo __('Favorite'); ?></a></li>
+            <li class="my-configuration"><a href="<?php echo $block->getUrl('marketplace/seller/profile') ?>"><?php echo __('Settings'); ?></a></li>
+            <li class="my-configuration" style="display: none;"><a href="<?php echo $this->getUrl() ?>customer/account/edit"><?php echo __('Settings'); ?></a></li>
+            <li class="my-logout"><a href="<?php echo $this->getUrl() ?>customer/account/logout"><?php echo __('Log out'); ?></a></li>
+         
+         <?php } ?>
+        </ul>
+      </div>
+      </li>
+    
+    <?php }else{ ?>
+    <li class="user-login-icon"><a href="<?php echo $this->getUrl() ?>customer/account/login">entrar</a></li>
+    <?php } ?>
+        
+    
+    <?php if(!$customerSession->isLoggedIn()) { ?>
+    <li><a href="<?php echo $block->getUrl('marketplace/seller/login') ?>"><?php echo __('Vender ingresso'); ?></a></li>
+
+    <?php } else if($is_seller=="seller"){ ?> 
+    <li><a href="<?php echo $this->getUrl() ?>marketplace/product/add" style=""><?php echo __('Vender ingresso'); ?></a></li>
+    <?php } else if($is_seller=="customer"){ ?>
+    <li><a href="<?php echo $this->getUrl('marketplace/general/changebuyer') ?>" style=""><?php echo __('Vender ingresso'); ?></a></li>
+    <?php } ?>
+</ul>
+
+<script type="text/javascript">
+ require([
+    "jquery"
+    ], function($){
+        jQuery(document).ready(function() {
+             jQuery(".ft-top").click(function() {
+              jQuery("html, body").animate({ scrollTop: 0 }, "slow");
+              return false;
+            });
+        });
+        
+        $(window).scroll(function() {
+            var scroll = $(window).scrollTop();
+            if (scroll >= 150) {
+                $('.ft-top').addClass("ft-top-show");
+            }
+            else
+            {
+                $('.ft-top').removeClass("ft-top-show");
+            }
+            
+       
+        });
+    });
+</script>
+
+
+<script type="text/javascript">
+function ajaxmessage(x,y,z){
+    var popbox = x;
+    require(['jquery'], function($){
+        
+        var message  = $('#message').val();
+        if(message == ''){
+            $('#message-error').css('display','block');
+            return false;
+        }else{
+            $('#message-error').css('display','none');
+        }
+        
+        $('.message_pop_up').css('display','none');
+        $('.messagebox').css('display','block');
+        $('#'+popbox).bPopup({
+            closeClass:'close',
+            positionStyle: 'fixed'
+        });
+        
+        var frm = $( "#"+y ).serialize();
+        console.log($( "#"+y ).serialize() );  
+        
+        $('.messagebox').css('display','none');
+        $('.loading-text').css('display','block');
+        $.ajax({
+            type: 'post',
+            url: z,
+            data: frm,
+            success: function (data) {
+                if(data=='fail'){
+                    $('.loading-text').css('display','none');
+                    $('.message_pop_up.fail').css('display','block');
+                    $('.message_pop_up').css('display','none');
+                    $('#message').val('');
+                }else{
+                    $('.loading-text').css('display','none');
+                    $('.message_pop_up').css('display','block');
+                    $('.message_pop_up.fail').css('display','none');
+                    $('#message').val('');
+                }
+                
+            }
+        });                 
+  });
+}
+
+</script>

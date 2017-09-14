@@ -1,0 +1,84 @@
+<?php
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+$_product = $block->getProduct();
+?>
+<?php if ($detailedInfoGroup = $block->getGroupChildNames('detailed_info', 'getChildHtml')):?>
+    <div class="product info detailed">
+        <?php $layout = $block->getLayout(); ?>
+        <div class="product data items" data-mage-init='{"tabs":{"openedState":"active"}}'>
+            <?php foreach ($detailedInfoGroup as $name):?>
+                <?php
+                    $html = $layout->renderElement($name);
+                    if (!trim($html)) {
+                        continue;
+                    }
+                    $alias = $layout->getElementAlias($name);
+                    $label = $block->getChildData($alias, 'title');
+                ?>
+                <div class="data item title"
+                     aria-labeledby="tab-label-<?php /* @escapeNotVerified */ echo $alias;?>-title"
+                     data-role="collapsible" id="tab-label-<?php /* @escapeNotVerified */ echo $alias;?>">
+                    <a class="data switch"
+                       tabindex="-1"
+                       data-toggle="switch"
+                       href="#<?php /* @escapeNotVerified */ echo $alias; ?>"
+                       id="tab-label-<?php /* @escapeNotVerified */ echo $alias;?>-title">
+                        <?php /* @escapeNotVerified */ echo $label; ?>
+                    </a>
+                </div>
+                <div class="data item content" id="<?php /* @escapeNotVerified */ echo $alias; ?>" data-role="content">
+                    <?php /* @escapeNotVerified */ echo $html; ?>
+                </div>
+            <?php endforeach;?>
+        </div>
+    </div>
+<?php endif; 
+$tips = $_product->getResource()->getAttribute('tips')->getFrontend()->getValue($_product);
+$faq = $_product->getResource()->getAttribute('faq')->getFrontend()->getValue($_product);
+$video = $_product->getResource()->getAttribute('video')->getFrontend()->getValue($_product);
+?>
+<div class="product info info-attribute">
+    <?php if($faq){ ?>
+    <div class="raq-attribute right-attribute">
+        <h3><?php echo __('Frequently Asked Questions'); ?></h3>
+        <div class="attributei-list">
+        <?php echo $faq; ?>
+        </div>
+    </div>
+    <?php } ?>
+    <?php if($tips){ ?>
+    <div class="tips-attribute right-attribute">
+        <h3><?php echo __('Tips'); ?></h3>
+        <div class="attributei-list">
+        <?php echo $tips; ?>
+        </div>
+    </div>
+    <?php } ?>
+    
+    <?php if($video){ ?>
+    <div class="video-attribute right-attribute">
+        <div class="youtube" id="<?php if($video) echo $video; ?>" data-params="controls=0&showinfo=0&rel=0"></div>
+    </div>
+    <?php } ?>
+</div>
+<div class="clearfix"></div>
+<script type="text/javascript">
+require([
+    'jquery'
+], function ($) {
+    'use strict';
+    jQuery( window ).load(function() {      
+        if(jQuery(window).width() < 767 ){
+            setTimeout(function(){
+            jQuery('.data.item.title').removeClass('active');
+            jQuery('.data.item.content').hide();
+            },100);
+        }
+    });                 
+});
+</script>

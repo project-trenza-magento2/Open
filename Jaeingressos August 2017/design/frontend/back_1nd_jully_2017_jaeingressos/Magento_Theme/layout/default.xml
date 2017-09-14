@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="header.panel">
+            <block class="Magento\Framework\View\Element\Html\Links" name="header.links">
+                <arguments>
+                    <argument name="css_class" xsi:type="string">header links</argument>
+                </arguments>
+            </block>
+
+        </referenceContainer>
+        <referenceBlock name="logo">
+            <arguments>
+                <argument name="logo_img_width" xsi:type="number">148</argument>
+                <argument name="logo_img_height" xsi:type="number">43</argument>
+            </arguments>
+        </referenceBlock>
+		
+		<referenceContainer name="header-wrapper">
+			<container name="login-wrap" as="login-wrap"  htmlTag="div" htmlClass="login-wrapper">
+			<!--block class="Magento\Cms\Block\Block" name="login_block">
+				<arguments>
+					<argument name="block_id" xsi:type="string">login_block</argument>
+				</arguments>
+			</block-->
+			<block class="Magento\Framework\View\Element\Template" name="header_right" as="header_right" template="Magento_Theme::header_right.phtml">
+			</block>
+
+			</container>
+		</referenceContainer>
+		
+        <referenceContainer name="footer">
+			<container name="footer-col" as="footer-col"  htmlTag="div" htmlClass="footer-col">
+				<block class="Magento\Cms\Block\Block" name="contact">
+					<arguments>
+						<argument name="block_id" xsi:type="string">contact-us</argument>
+					</arguments>
+				</block>
+			</container>
+			
+			<container name="footer-col1" as="footer-col1"  htmlTag="div" htmlClass="footer-col">
+				<block class="Magento\Cms\Block\Block" name="utilidades">
+					<arguments>
+						<argument name="block_id" xsi:type="string">utilidades</argument>
+					</arguments>
+				</block>
+			</container>
+			
+			<container name="footer-col2" as="footer-col2"  htmlTag="div" htmlClass="footer-col">
+				<block class="Magento\Cms\Block\Block" name="minha_conta">
+					<arguments>
+						<argument name="block_id" xsi:type="string">minha_conta</argument>
+					</arguments>
+				</block>
+			</container>
+			
+			<container name="footer-bottom" as="footer-bottom"  htmlTag="div" htmlClass="footer-bottom">
+				<block class="Magento\Cms\Block\Block" name="bottom-content">
+					<arguments>
+						<argument name="block_id" xsi:type="string">footer-bottom</argument>
+					</arguments>
+				</block>
+			</container>
+			
+            <block class="Magento\Store\Block\Switcher" name="store_switcher" as="store_switcher" after="footer_links" template="switch/stores.phtml"/>
+        </referenceContainer>
+		
+        <referenceBlock name="report.bugs" remove="true"/>
+        <referenceBlock name="top.search" remove="true"/>
+		<referenceBlock name="minicart" remove="true"/>
+		
+		<referenceBlock name="form.subscribe" remove="true"/>
+		<referenceBlock name="footer_links" remove="true"/>
+        <move element="copyright" destination="before.body.end"/>
+		
+		<container name="header_advance_search" as="header_advance_search" htmlTag="div" htmlClass="advance_search_div">	
+			<block class="Magento\Framework\View\Element\Template" name="advance_search" as="advance_search" template="Magento_Theme::advance_search.phtml"></block>
+		</container>
+		
+		
+		
+    </body>
+</page>

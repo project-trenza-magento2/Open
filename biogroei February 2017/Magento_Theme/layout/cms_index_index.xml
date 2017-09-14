@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+
+  <referenceContainer name="content">
+	<container name="banner" as="banner" label="Page Banner" htmlTag="div" htmlClass="banner-content">	
+		<block class="Magento\Cms\Block\Block" after="-" name="homepagedesktopbanner1">
+			<arguments>
+				<argument name="block_id" xsi:type="string">homepage-desktop-banner1</argument>
+			</arguments>
+		</block>
+		<block class="Magento\Cms\Block\Block" after="-" name="homepagedesktopbanner2">
+			<arguments>
+				<argument name="block_id" xsi:type="string">homepage-desktop-banner2</argument>
+			</arguments>
+		</block>
+		<block class="Magento\Cms\Block\Block" after="-" name="homepagedesktopbanner3">
+			<arguments>
+				<argument name="block_id" xsi:type="string">homepage-desktop-banner3</argument>
+			</arguments>
+		</block>
+		<block class="Magento\Cms\Block\Block" after="-" name="homepagedesktopbanner4">
+			<arguments>
+				<argument name="block_id" xsi:type="string">homepage-desktop-banner4</argument>
+			</arguments>
+		</block>
+		<block class="Magento\Cms\Block\Block" after="-" name="homepagedesktopbanner5">
+			<arguments>
+				<argument name="block_id" xsi:type="string">homepage-desktop-banner5</argument>
+			</arguments>
+		</block>
+	</container>
+	
+	<container name="banner-mobile" as="bannermobile" label="Page Banner Mobile" htmlTag="div" htmlClass="banner-content banner-mobile">
+		<block class="Magento\Cms\Block\Block" name="uspmobile">
+			<arguments>
+				<argument name="block_id" xsi:type="string">usp</argument>
+			</arguments>
+		</block>
+		<block class="Magento\Cms\Block\Block" after="-" name="homepagebanner1">
+			<arguments>
+				<argument name="block_id" xsi:type="string">homepage-banner-1</argument>
+			</arguments>
+		</block>
+		<block class="Magento\Cms\Block\Block" after="-" name="homepagebanner2">
+			<arguments>
+				<argument name="block_id" xsi:type="string">homepage-banner-2</argument>
+			</arguments>
+		</block>
+		<block class="Magento\Cms\Block\Block" after="-" name="homepagebanner3">
+			<arguments>
+				<argument name="block_id" xsi:type="string">homepage-banner-3</argument>
+			</arguments>
+		</block>
+		<block class="Magento\Cms\Block\Block" after="-" name="homepagebanner4">
+			<arguments>
+				<argument name="block_id" xsi:type="string">homepage-banner-4</argument>
+			</arguments>
+		</block>
+	</container>
+  </referenceContainer>
+  
+
+<referenceContainer name="top.container">
+	 <block class="Magento\Framework\View\Element\Template" name="home_slider_large" as="home_slider_large" template="Magento_Theme::home/home_slider_large.phtml" after="-">
+       <arguments>
+          <argument translate="true" name="title" xsi:type="string">Home slider</argument>
+        </arguments>
+    </block>
+</referenceContainer>
+
+<referenceContainer name="full-wrapper">
+	<block class="Magento\Framework\View\Element\Template" name="home_slider_products" as="home_slider_products" template="Magento_Theme::home/home_slider_products.phtml" after="home_blocks">
+      <arguments>
+         <argument translate="true" name="title" xsi:type="string">Producten in de kijker</argument>
+      </arguments>
+	</block>
+	
+	<container name="wrapper-full" as="wrapperfull" label="Page wrapper full" htmlTag="div" htmlClass="wrapper-full">
+	<container name="wrapper" as="wrapper" label="Page wrapper" htmlTag="div" htmlClass="page-main">
+		<block class="Magento\Cms\Block\Block" after="-" name="overbiogroei">
+				<arguments>
+					<argument name="block_id" xsi:type="string">over-biogroei</argument>
+				</arguments>
+		</block>
+	</container>
+	</container>
+	<container name="wrapper-bottom" as="wrapper.bottom" label="Page bottom wrapper" htmlTag="div" htmlClass="page-main blog-wrapper">
+		<container name="leftside" as="leftside" label="Page leftside" htmlTag="div" htmlClass="left-side">
+		<block class="Magento\Cms\Block\Block" after="-" name="recentpost">
+				<arguments>
+					<argument name="block_id" xsi:type="string">recent-post</argument>
+				</arguments>
+		</block>
+		</container>
+		
+		<container name="rightside" as="rightside" label="Page rightside" htmlTag="div" htmlClass="right-side">
+		<block class="Magento\Cms\Block\Block" after="-" name="homepage_desktop_banner6">
+				<arguments>
+					<argument name="block_id" xsi:type="string">homepage-desktop-banner6</argument>
+				</arguments>
+		</block>
+		</container>
+	</container>
+	
+	
+	
+</referenceContainer>
+
+
+</page>

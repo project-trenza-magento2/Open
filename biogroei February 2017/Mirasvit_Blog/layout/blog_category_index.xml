@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd"
+      layout="1column">
+
+    <update handle="blog_default"/>
+
+    <body>
+        <referenceContainer name="content">
+            <block name="blog.category.view" class="Mirasvit\Blog\Block\Category\View" template="category/view.phtml">
+                <block class="Mirasvit\Blog\Block\Post\Pinned" name="blog.post.pinned" template="post/pinned.phtml" />
+
+                <block class="Mirasvit\Blog\Block\Post\PostList" name="blog.post.list" template="post/list.phtml">
+                    <container name="blog.post.list.additional"/>
+
+                    <block class="Mirasvit\Blog\Block\Post\PostList\Toolbar" name="blog.post.list.toolbar"
+                           template="post/list/toolbar.phtml">
+                        <block class="Mirasvit\Blog\Block\Html\Pager" name="pager"/>
+                    </block>
+
+                    <action method="setToolbarBlockName">
+                        <argument name="name" xsi:type="string">blog.post.list.toolbar</argument>
+                    </action>
+                </block>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

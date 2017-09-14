@@ -1,0 +1,79 @@
+<?php
+
+/**
+ * Magestore
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Magestore.com license that is
+ * available through the world-wide-web at this URL:
+ * http://www.magestore.com/license-agreement.html
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category    Magestore
+ * @package     Magestore_Bannerslider
+ * @copyright   Copyright (c) 2012 Magestore (http://www.magestore.com/)
+ * @license     http://www.magestore.com/license-agreement.html
+ */
+
+?>
+<?php
+/** @var \Magestore\Bannerslider\Block\SliderItem $block */
+$styleSlide = $block->getSlider()->getStyleSlide();
+$slider = $block->getSlider();
+$htmlId   = $block->getFlexsliderHtmlId();
+$bannerCollection = $block->getBannerCollection();
+?>
+
+<script type="text/javascript">
+ require([
+    "jquery"
+    ], function($){
+        $(document).ready(function() {
+            jQuery("#homeslidern").owlCarousel({
+                items: 1,
+                autoplay: true,
+                dots: true,
+                nav: true,
+                loop: true
+            });
+        });
+    });
+</script>
+<div class="magestore-bannerslider-standard" data-mage-init='{"magestore/impress": {"url": "<?php echo $this->getUrl("bannerslider/index/impress") ?>", "slider_id": "<?php echo $block->getSlider()->getId() ?>"}}'>
+    <?php if ($block->isShowTitle() == \Magestore\Bannerslider\Model\Slider::SHOW_TITLE_YES) :
+    ?>
+        <div class="magestore-bannerslider-title">
+        <strong><span><?php echo $block->escapeHtml($slider->getTitle()); ?></span></strong>
+        </div>
+    <?php endif; ?>
+    <div class="magestore-bannerslide-flex-slider3" style="margin: auto; margin-bottom: 40px;">
+        <div id="homeslidern" class="owl-carousel owl-theme">
+            
+                <?php foreach ($bannerCollection as $banner):
+                ?>
+                    <?php if ($styleSlide == \Magestore\Bannerslider\Model\Slider::STYLESLIDE_FLEXSLIDER_TWO) : ?>
+                    <div class="item" data-thumb="<?php echo $block->getBannerImageUrl($banner) ?>">
+                        <a href="<?php echo $banner->getClickUrl() ?>" target="<?php echo $banner->getTargetValue() ?>" style="display:block;" data-mage-init='{"magestore/clickbanner": {"url": "<?php echo $this->getUrl("bannerslider/index/click") ?>", "slider_id": "<?php echo $banner->getSliderId() ?>", "banner_id": "<?php echo $banner->getId() ?>" }}' >
+                            <img alt="<?php echo $banner->getImageAlt() ?>" src="<?php echo $block->getBannerImageUrl($banner) ?>"/>
+                        </a>
+                        <?php if($banner->getCaption()): ?><div class="flex-caption"><?php echo $banner->getCaption(); ?></div><?php endif; ?>
+                    </div>
+                    <?php else :
+                    ?>
+                    <div class="item">
+                        <a href="<?php echo $banner->getClickUrl() ?>" target="<?php echo $banner->getTargetValue() ?>" style="display:block;" data-mage-init='{"magestore/clickbanner": {"url": "<?php echo $this->getUrl("bannerslider/index/click") ?>", "slider_id": "<?php echo $banner->getSliderId() ?>", "banner_id": "<?php echo $banner->getId() ?>" }}' >
+                            <img alt="<?php echo $banner->getImageAlt() ?>"  src="<?php echo $block->getBannerImageUrl($banner) ?>"/>
+                        </a>
+                        <?php if($banner->getCaption()): ?><div class="flex-caption"><?php echo $banner->getCaption(); ?></div><?php endif; ?>
+                    </div>
+                    <?php endif; ?>
+                <?php endforeach ?>
+            
+        </div>
+    </div>
+</div>

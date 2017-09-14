@@ -1,0 +1,7 @@
+<?php 
+$related_content = $this->getLayout()->getBlock('catalog.product.related')->toHtml();
+if (strlen($related_content) > 10){ ?> 
+<div class="product related view">
+    <?php echo $related_content;  ?>
+</div> 
+<?php } ?>

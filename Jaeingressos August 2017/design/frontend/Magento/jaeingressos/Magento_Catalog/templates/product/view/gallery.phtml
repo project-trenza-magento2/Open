@@ -1,0 +1,312 @@
+<?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/**
+ * Product media data template
+ *
+ * @var $block \Magento\Catalog\Block\Product\View\Gallery
+ */
+?>
+<div class="product-information">
+<?php
+    $product_id = $block->getProduct()->getId();
+?>
+<input type="hidden" id="product_id" value="<?php echo $product_id; ?>" />
+<?php 
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$product = $objectManager->create('Magento\Catalog\Model\Product')->load($block->getProduct()->getId());
+ //echo $product->getThumbnail();
+$imagewidth=200;
+$imageheight=200;
+$imageHelper  = $objectManager->get('\Magento\Catalog\Helper\Image');
+$image_url = $imageHelper->init($product, 'product_page_image_small')->setImageFile($product->getFile())->resize($imagewidth, $imageheight)->getUrl();
+ //echo $image_url
+//echo  $product->getProductUrl(); 
+?>
+    <div class="product-image">
+        <img src="<?php echo $image_url;?>" />
+    </div>
+    <div class="product-information-details">
+        <h3 class="product-title"><?php  echo $block->getProduct()->getName(); ?></h3>
+        <table border="0" style="max-width: 500px;" id="product-detail-table">
+            <tr>
+                <td width="40%"> <span><?php echo __('Date');?></span></td>
+                <td width="60%"><h5><?php  
+                $date = $block->getProduct()->getData('concert_date');
+                echo $newDate = date("d/m/Y", strtotime($date));
+                ?>
+                </h5></td>
+            </tr>
+            
+            <tr>
+                <td> <span><?php echo __('Category');?></span></td>
+                <td>
+                <h5>
+                    <?php
+                        $product_att = $objectManager->get('Magento\Framework\Registry')->registry('current_product');
+                        $categories = $product_att->getCategoryIds(); /*will return category ids array*/
+                        foreach($categories as $category){
+                            $cat = $objectManager->create('Magento\Catalog\Model\Category')->load($category);
+                                if(strtolower($cat->getName()) != 'highlights' && strtolower($cat->getName()) != 'it\'s coming'){
+                                $result[] = strtolower($cat->getName());
+                                }
+                            }
+                         echo implode(", ", $result);
+                    ?>
+                </h5>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><span><?php echo iconv('ISO-8859-1', 'UTF-8', __('Concert shedule')); ?></span></td>
+                <td><h5>
+                    <?php  
+                        echo $concert_shedule = $block->getProduct()->getData('concert_shedule');
+                        //echo $newDate = date("h:m", strtotime($date));
+                     ?>
+                </h5></td>
+            </tr>
+            
+            <tr>
+                <td><span><?php echo __('Address');?></span></td>
+                <td><h5>
+                    <?php  
+                        $concert_address = $block->getProduct()->getData('concert_address');
+                        echo $concert_address;
+                     ?>
+                </h5></td>
+            </tr>
+            
+            <tr>
+                <td><span><?php echo __('City');?></span></td>
+                <td><h5>
+                    <?php
+                       // echo $city = $block->getProduct()->getData('busca_por_cidade');
+
+                     ?>
+					 <?php  
+						$busca_por_cidade = $block->getProduct()->getData('busca_por_cidade');
+						$attr = $product->getResource()->getAttribute('busca_por_cidade');
+						 if ($attr->usesSource()) {
+							   echo $optionText = $attr->getSource()->getOptionText($busca_por_cidade);
+						 }
+						 
+					 ?>
+                </h5></td>
+            </tr>
+            
+            
+            <tr>
+                <td><span><?php echo __('Sexo');?></span></td>
+                <td><h5><?php  
+                $sex = $block->getProduct()->getData('sexo');
+                $attr = $product->getResource()->getAttribute('sexo');
+                 if ($attr->usesSource()) {
+                       echo $optionText = $attr->getSource()->getOptionText($sex);
+                 }
+                 
+             ?>
+			 </h5>
+			 </td>
+            </tr>
+            
+            <tr>
+                <td style="padding: 20px 0px !important;"><span><?php echo __('Quantity');?></span></td>
+                <td style="padding: 20px 0px !important;">  <div class="field qty" >
+         
+            <!--<label class="label" for="qty"><span><?php /* @escapeNotVerified */ echo __('Qty') ?></span></label>-->
+            <div class="control">
+                <input type="number"
+                       name="qty"
+                       id="qty"
+                       maxlength="12"
+                       value="<?php /* @escapeNotVerified */ echo $block->getProductDefaultQty() * 1 ?>"
+                       title="<?php /* @escapeNotVerified */ echo __('Qty') ?>" class="input-text qty"
+                       data-validate="<?php echo $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>"
+                />
+            </div>
+        </div></td>
+            </tr>
+            
+            <tr>
+                <td> <span><?php echo __('Sold by');?></span></td>
+                <td><div class="field soldby" style="    width: 100%;">
+           
+            
+            <?php 
+                 $seller_id = $product->getSellerId();
+                 $imageBlock =  $block->getLayout()->createBlock('Apptha\Marketplace\Block\Seller\Profile');
+                 $sellerProfileDetails = $imageBlock->getSellerProfilebyid ($seller_id);
+                 $sellerDetails = $sellerProfileDetails ['seller_details'];
+                 $countryDatas = $sellerProfileDetails ['country_list'];
+                 $logoImage = $sellerProfileDetails ['logo_image'];
+                 $bannerImage = $sellerProfileDetails ['banner_image'];
+                 $objectModelManager = \Magento\Framework\App\ObjectManager::getInstance ();
+                 /* Profile Photo Block */
+                 $avatar = $block->getLayout()->createBlock('SY\Avatar\Block\Customer\Account\Avatar');
+                 
+                 $trenza = $block->getLayout()->createBlock('Trenza\Message\Block\Message');
+                 $seller_random_name = $trenza->random_name();
+                 
+            ?>
+            <img src="<?php echo $block->getViewFileUrl('images/user.png'); ?>" style="    border-radius: 50%;height: 22px;width: 21px;float: left;margin-right: 6px;margin-top: 7px;margin-left: -31px;"/>
+             <?php if($sellerDetails->getLogoName()!=''){?>
+                <!--<img src="<?php echo $logoImage.$sellerDetails->getLogoName(); ?>" style="    border-radius: 50%;height: 24px;width: 25px;float: left;margin-top: 8px;margin-right: 6px;margin-left: -40px;"/-->
+                <?php }else{?>
+            	<!--<img src="<?php echo $avatar->getAvatar(); ?>" style="border-radius: 50%;height: 24px;width: 25px;float: left;margin-top: 8px;margin-right: 6px;margin-left: -40px;"-->
+             <?php } ?>
+                <a class="user-title" href="<?php echo $this->getUrl(str_replace(' ', '-', $sellerDetails->getStoreName())) ;?>"><?php 
+                    $getStoreName = explode(' ',trim($sellerDetails->getStoreName()));
+                    //echo $getStoreName[0];
+                    echo $seller_random_name = $trenza->random_name();
+                    //echo 'userxpto';
+                ?></a>
+                
+         </div></td>
+            </tr>
+        </table>
+        <script type="text/javascript">
+            require([ 'jquery'], function($){
+                jQuery( "#qty" ).change(function() {
+                    var qty = jQuery('#qty').val();
+                    jQuery('#quantity').val(qty);
+                    jQuery('#qty_').val(qty);
+                });
+                jQuery( document ).ready(function() {
+                jQuery( ".ui-spinner-button.ui-button" ).click(function() {
+                    var qty = jQuery('#qty').val();
+                    jQuery('#quantity').val(qty);
+                    jQuery('#qty_').val(qty);
+                });
+                });
+                
+            });            
+        </script>
+        
+        
+        
+        
+        
+       
+         
+         
+    </div>
+    
+
+</div>
+<?php   
+
+
+$customerSession = $objectManager->get('Magento\Customer\Model\Session');
+$customerId = $customerSession->getId ();
+    $module_msg =  $block->getLayout()->createBlock('Trenza\Message\Block\Message');
+    $parent_id = $module_msg->getParentId($customerId,$seller_id);
+?>
+    <div class="product-message">
+        <h3 class="product-title"><?php echo __('Send a message');?></h3>
+        <form action="" method="post" id="messagesend">
+        	<textarea name="message" id="message"></textarea>
+            <input type="hidden" name="receiver_id" value="<?php echo $seller_id; ?>">
+            <input type="hidden" name="product_id" value="<?php echo $block->getProduct()->getId(); ?>">
+            <input type="hidden" name="parent_id" value="<?php echo $parent_id; ?>">
+            <input type="hidden" name="seller_id" value="<?php echo $seller_id; ?>">
+            
+            <?php 
+            $module_msg =  $block->getLayout()->createBlock('Trenza\Message\Block\Message');
+            $module_msg = $module_msg->is_customer_login();
+            
+            if($module_msg){
+            ?>
+            <a href="#" class="button send" onclick="ajaxmessage('popup','messagesend','<?php echo $this->getUrl('message/index/send/'); ?>'); return false;"> <?php echo __('To send');?></a>
+        	<?php } else{?>
+            <a href="<?php echo $this->getUrl(''); ?>/customer/account/login/" class="button send"> <?php echo __('To send');?></a>
+            <?php }?>
+        </form>
+        <div for="comment" generated="true" class="mage-error" id="message-error" style="display: none;"><font><font class="">This field is required.</font></font></div>
+    </div>
+    
+    <div class="element_to_pop_up element_to_pop_up3" id="popup" style="display: none; background: #fff; width: 845px; height: 600px;">
+        <div class="close">X</div>
+        <div class="content">
+            <div class="loading-text" style="display: none;"></div>
+            <div class="element_to_pop_up2 message_pop_up" id="message_pop_up" style="display: none;">
+                    <div class="icon-success"></div>
+                    <div class="success-text"><?php /* @escapeNotVerified */ echo __('Massage successfully sent!'); ?></div>
+                    <div class="close-button close" onClick="window.location.reload()"><?php /* @escapeNotVerified */ echo __('close'); ?></div>
+            </div>
+        </div>
+    </div>
+        
+        
+    <div class="product-comments">
+        <h3 class="product-title"> <?php echo iconv('ISO-8859-1', 'UTF-8', __('Other comments'));?></h3>
+        
+        <ul class="question-list">
+            <?php 
+                $message =  $block->getLayout()->createBlock('Trenza\Message\Block\Message');
+                $model = $objectManager->create('Trenza\Message\Model\Message');
+                $collection = $model->getCollection()->addFieldToFilter('seller_id', array('neq'=> 0))->setOrder('created_at', 'DESC');
+                $i = 0;  
+            ?>
+            
+            <?php foreach($collection as $item): ?>
+            
+            <?php if($item->getProductId() == $product_id): ?>
+            <?php if( $seller_id == $item->getSenderId() ): ?>
+            <?php $i = $i +1; ?>
+            <li>
+                <div class="text-right full-width">
+                    <h4><?php echo $getStoreName[0]; ?></h4>
+                    <h5><?php echo $item->getMessage();?></h4>
+                </div>
+            </li>
+            <?php else: ?>
+            <?php $i = $i +1; ?>
+             <li>
+                <div class="text-left full-width">
+                    <h4><?php 
+                    $customerObj = $objectManager->create('Magento\Customer\Model\Customer')
+                    ->load($item->getSenderId());
+                   echo $customerObj->getFirstname();
+                    ?></h4>
+                    <h5><?php echo $item->getMessage();?></h4>
+                </div>
+            </li>
+            <?php endif; ?>
+            <?php endif; ?>
+            <?php endforeach; ?>
+            <?php if($i == 0): ?>
+                <li>
+                    <div class="text-left full-width">
+                        <h5><?php echo iconv('ISO-8859-1', 'UTF-8',  __('No Comment Found')); ?></h4>
+                    </div>
+                </li> 
+            <?php endif; ?>
+        </ul>
+    </div>
+    
+    <?php echo $block->getReviewsSummaryHtml($block->getProduct(), false, true)?>
+    
+    
+    
+<script type="text/javascript">
+    require([ 'jquery','jquery/ui'], function($){
+         jQuery('#qty').spinner({
+            min: 1,
+            change: function( event, ui ) {
+                var qty = jQuery('#qty').val();
+                jQuery('#quantity').val(qty);
+                jQuery('#qty_').val(qty);
+            }
+         });
+         
+         
+    });
+    
+    
+</script>

@@ -1,0 +1,209 @@
+<?php
+
+    $sellerGroupId = '';
+    $customerId = '';
+    $customerGroupId = '';
+    $status = '';
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $customerSession = $objectManager->get('Magento\Customer\Model\Session');
+    $customerId = $block->getRequest()->getParam('id');
+    
+    $sellerDatas = $objectManager->get('Apptha\Marketplace\Model\Seller');
+    
+    $message_textfield = $this->helper('Trenza\Message\Helper\Data')->getConfig('message_settings/general/message_filter');
+    $message_textfield = nl2br($message_textfield);
+    
+    $message_textfield = explode("<br />", $message_textfield);
+    //print_r($message_textfield);
+    
+            
+    
+    $sellerDetails = $sellerDatas->load($customerId,'customer_id');
+    $logoName = $sellerDetails->getLogoName();
+    $logoImage = $objectManager->get ('Magento\Store\Model\StoreManagerInterface')->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA).'Marketplace/Seller/Resized';
+
+    $message =  $block->getLayout()->createBlock('Trenza\Message\Block\Message');
+
+    $customerDatas = $customerSession->getCustomer();
+    if ($customerSession->isLoggedIn())
+    {
+        $customerId = $customerSession->getId ();
+        
+        $customerGroupId = $customerDatas->getGroupId ();
+        $customerGroupSession = $objectManager->get ( 'Magento\Customer\Model\Group' );
+        $customerGroupData = $customerGroupSession->load ( $customerGroupId );
+        $sellerGroupCode = $customerGroupData->getCode ();
+        $sellerGroupData = $customerGroupSession->load ( 'Marketplace Seller', 'customer_group_code' );
+        
+        $sellerGroupId = $sellerGroupData->getId ();
+        $customerGroupSession = $objectManager->get ( 'Apptha\Marketplace\Model\Seller' );
+        
+        $status = $customerGroupSession->load ( $customerId, 'customer_id' )->getStatus ();
+    }
+    else
+    {
+        $request = $objectManager->get('Magento\Framework\App\Request\Http');
+        $urlInterface = $objectManager->get('Magento\Framework\UrlInterface');
+        $url = $urlInterface->getUrl('customer/account/login');
+        if(strpos($request->getPathInfo(),'/customer/account/')!== 0)
+        {
+            # redirect to /customer/account/login    
+            header('Location:'.$url );die();
+        }  
+    }
+?>
+
+
+<?php // View Message ?>
+<?php 
+    $collection = $this->seller_inbox($customerId);
+    $storename = $sellerDetails->getLogoName();
+    
+    
+?>
+
+    <form class="message-inbox" id="messagedelete" action="" method="POST">
+         <div class="message-inbox-head">
+            <ul>
+                <li>
+                     <div class="message-inbox-checkbox allselect">
+                        <input type="checkbox" id="allselect" name="alldelete" /> 
+                        <label for="allselect"></label>
+                        
+                    </div>
+                    <label class="message-header-title" for="allselect"><?php echo __('Sleect all'); ?></label>
+                </li>
+                
+                <li>
+                    <input name="delete" type="hidden" value="x" />
+                    <a href="javascript:void(0);" class="action-delete message-header-title" onclick="ajaxmessage('popup','messagedelete','<?php  echo $this->getUrl('message/index/delete'); ?>'); return false;"><?php echo __('Delete'); ?></a>
+                </li>
+            </ul>
+           
+            
+        </div>
+        
+<?php foreach($collection as $value): ?>
+    <?php 
+        if($value->getSenderId() != $value->getReceiverId()):    
+        //echo $value->getSenderId();
+        if($this->is_customer_seller($value->getSenderId()) == 'seller'){
+            //echo $value->getSenderId().'=>';
+            //echo $value->getReceiverId();
+            $imageBlock =  $block->getLayout()->createBlock('Apptha\Marketplace\Block\Seller\Profile');
+            $sellerProfileDetails = $imageBlock->getSellerProfilebyid ($value->getSenderId());
+            $sellerDetails = $sellerProfileDetails ['seller_details'];
+            $countryDatas = $sellerProfileDetails ['country_list'];
+            $logoImage = $sellerProfileDetails ['logo_image'];
+            $bannerImage = $sellerProfileDetails ['banner_image'];
+            $sender_name = $sellerDetails->getStoreName();
+        }else{
+            $customerObj = $objectManager->create('Magento\Customer\Model\Customer')->load($value->getSenderId()); 
+            $sender_name = $customerObj->getFirstname();
+        }
+    
+        
+    
+?>
+    
+    <!-- <a href="<?php  echo $this->getUrl('message/index/messageview'); ?>?<?php echo 'msg_='.$value->getId().'&&rcv_='.$value->getReceiverId().'&&snd_='.$value->getSenderId(); ?>" >-->
+    
+        <a href="<?php  echo $this->getUrl('message/index/view/').'id/'.$value->getId(); ?>" >
+            <div class="message-inbox-body" style="width: 100%;">
+                <ul class="front-message">
+                    <li>
+                         <div class="message-inbox-checkbox">
+                            <input class="selectmessage" name="checkbox[]" type="checkbox" id="check-<?php echo $value->getId(); ?>" value="<?php echo $value->getId(); ?>" />
+                            <label for="check-<?php echo $value->getId(); ?>"></label>
+                        </div>
+                    </li>
+                    
+                    <li style="<?php if($this->message_allready_read($value->getId())>0){echo ''; }else{ echo 'opacity:.5'; } ?>">
+                        <h3><?php echo $sender_name; ?></h3>
+                        <h5><?php echo $value->getMessage(); ?></h5>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                </ul>
+                
+                
+            </div>
+        </a>
+    <?php endif; ?>
+<?php endforeach; ?>
+
+    </form>
+
+    <div class="element_to_pop_up element_to_pop_up3" id="popup" style="display: none; background: #fff; width: 845px; height: 600px;">
+        <div class="close">X</div>
+        <div class="content">
+        <div class="loading-text" style="display: none;"></div>
+        <div class="element_to_pop_up2 message_pop_up" style="display: none;">
+                <div class="icon-success"></div>
+                <div class="success-text"><?php /* @escapeNotVerified */ echo __('Massage successfully Delete!'); ?></div>
+                <div class="close-button close" onClick="window.location.reload()"><?php /* @escapeNotVerified */ echo __('close'); ?></div>
+        </div>
+        </div>
+    </div>
+        
+<?php 
+
+    
+    //echo $customerId;
+    
+    //$this->message_unread_count($customerId);
+   // $this->printMessage();
+   
+?>
+
+
+
+<script type="text/javascript">
+    require([ 'jquery'], function($){
+    jQuery(document).ready(function () {
+        jQuery("#allselect").click(function () {
+            jQuery(".selectmessage").prop('checked', jQuery(this).prop('checked'));
+    });
+    });
+    });
+</script>
+<script type="text/javascript">
+    
+    require(['jquery'], function($){
+    $('.form .submit').click(function(){
+
+                
+                $('.element_to_pop_up3').bPopup({
+                    closeClass:'close',
+                    positionStyle: 'fixed'
+                });
+                
+                $('.message_pop_up').css('display','none');
+                var frm = $('#contact-form');
+                frm.submit(function (e) {
+                    $('.loading-text').css('display','block');
+                    e.preventDefault();
+            
+                    $.ajax({
+                        type: frm.attr('method'),
+                        url: frm.attr('action'),
+                        data: frm.serialize(),
+                        success: function (data) {
+                          $('.loading-text').css('display','none');
+                          $('.message_pop_up').css('display','block');
+                        }
+                    });
+                });
+            
+    });
+    });
+</script>
+
+
+
+<style type="text/css">
+    .page-title-wrapper{display:none}
+</style>

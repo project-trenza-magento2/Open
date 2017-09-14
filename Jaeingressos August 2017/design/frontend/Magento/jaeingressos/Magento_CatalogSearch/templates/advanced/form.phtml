@@ -1,0 +1,181 @@
+<?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * Catalog advanced search form
+ *
+ * @var $block \Magento\CatalogSearch\Block\Advanced\Form
+ */
+?>
+<style>
+.page-title{display:none!important}
+.message.error{display:none}
+.message.error.show{display:block!important}
+</style>
+<?php $maxQueryLength = $this->helper('Magento\CatalogSearch\Helper\Data')->getMaxQueryLength();?>
+<div class='message error show'>
+            <div>Please specify at least one search term.</div>
+</div>
+<form class="form search advanced" action="<?php /* @escapeNotVerified */ echo $block->getSearchPostUrl() ?>" method="get" id="form-validate">
+<fieldset class="fieldset">
+    <legend class="legend"><span><?php /* @escapeNotVerified */ echo __('Search Settings') ?></span></legend><br />
+    <?php foreach ($block->getSearchableAttributes() as $_attribute): ?>
+    <?php $_code = $_attribute->getAttributeCode() ?>
+        <div class="field <?php /* @escapeNotVerified */ echo $_code ?>">
+            <label class="label" for="<?php /* @escapeNotVerified */ echo $_code ?>">
+                <span><?php echo $block->escapeHtml(__($block->getAttributeLabel($_attribute))) ?></span>
+            </label>
+            <div class="control">
+            <?php switch ($block->getAttributeInputType($_attribute)):
+                case 'number': ?>
+                <div class="range fields group group-2">
+                    <div class="field no-label">
+                        <div class="control">
+                            <input type="text"
+                                   name="<?php /* @escapeNotVerified */ echo $_code ?>[from]"
+                                   value="<?php echo $block->escapeHtml($block->getAttributeValue($_attribute, 'from')) ?>"
+                                   id="<?php /* @escapeNotVerified */ echo $_code ?>"
+                                   title="<?php echo $block->escapeHtml($block->getAttributeLabel($_attribute)) ?>"
+                                   class="input-text"
+                                   maxlength="<?php /* @escapeNotVerified */ echo $maxQueryLength;?>"
+                                   data-validate="{number:true, 'less-than-equals-to':'#<?php /* @escapeNotVerified */ echo $_code ?>_to'}" />
+                        </div>
+                    </div>
+                    <div class="field no-label">
+                        <div class="control">
+                            <input type="text"
+                                   name="<?php /* @escapeNotVerified */ echo $_code ?>[to]"
+                                   value="<?php echo $block->escapeHtml($block->getAttributeValue($_attribute, 'to')) ?>"
+                                   id="<?php /* @escapeNotVerified */ echo $_code ?>_to"
+                                   title="<?php echo $block->escapeHtml($block->getAttributeLabel($_attribute)) ?>"
+                                   class="input-text"
+                                   maxlength="<?php /* @escapeNotVerified */ echo $maxQueryLength;?>"
+                                   data-validate="{number:true, 'greater-than-equals-to':'#<?php /* @escapeNotVerified */ echo $_code ?>'}" />
+                        </div>
+                    </div>
+                </div>
+                <?php break;
+                case 'price': ?>
+                <div class="range price fields group group-2">
+                    <div class="field no-label">
+                        <div class="control">
+                            <input name="<?php /* @escapeNotVerified */ echo $_code ?>[from]"
+                                   value="<?php echo $block->escapeHtml($block->getAttributeValue($_attribute, 'from')) ?>"
+                                   id="<?php /* @escapeNotVerified */ echo $_code ?>"
+                                   title="<?php echo $block->escapeHtml($block->getAttributeLabel($_attribute)) ?>"
+                                   class="input-text"
+                                   type="text"
+                                   maxlength="<?php /* @escapeNotVerified */ echo $maxQueryLength;?>"
+                                   data-validate="{number:true, 'less-than-equals-to':'#<?php /* @escapeNotVerified */ echo $_code ?>_to'}" />
+                        </div>
+                    </div>
+                    <div class="field with-addon no-label">
+                        <div class="control">
+                            <div class="addon">
+                                <input name="<?php /* @escapeNotVerified */ echo $_code ?>[to]"
+                                       value="<?php echo $block->escapeHtml($block->getAttributeValue($_attribute, 'to')) ?>"
+                                       id="<?php /* @escapeNotVerified */ echo $_code ?>_to"
+                                       title="<?php echo $block->escapeHtml($block->getAttributeLabel($_attribute)) ?>"
+                                       class="input-text"
+                                       type="text"
+                                       maxlength="<?php /* @escapeNotVerified */ echo $maxQueryLength;?>"
+                                       data-validate="{number:true, 'greater-than-equals-to':'#<?php /* @escapeNotVerified */ echo $_code ?>'}" />
+                                <label class="addafter"
+                                       for="<?php /* @escapeNotVerified */ echo $_code ?>_to">
+                                    <?php /* @escapeNotVerified */ echo $block->getCurrency($_attribute); ?>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php break;
+                case 'select': ?>
+                    <?php /* @escapeNotVerified */ echo $block->getAttributeSelectElement($_attribute) ?>
+                <?php break;
+                case 'yesno': ?>
+                    <?php /* @escapeNotVerified */ echo $block->getAttributeYesNoElement($_attribute) ?>
+                <?php break;
+                case 'date': ?>
+                <div class="range dates fields group group-2">
+                    <div class="field date no-label">
+                        <div class="control">
+                            <?php /* @escapeNotVerified */ echo $block->getDateInput($_attribute, 'from') ?>
+                        </div>
+                    </div>
+                    <div class="field date no-label">
+                        <div class="control">
+                            <?php /* @escapeNotVerified */ echo $block->getDateInput($_attribute, 'to') ?>
+                        </div>
+                    </div>
+                </div>
+                <?php break;
+                default: ?>
+                <input type="text"
+                       name="<?php /* @escapeNotVerified */ echo $_code ?>"
+                       id="<?php /* @escapeNotVerified */ echo $_code ?>"
+                       value="<?php echo $block->escapeHtml($block->getAttributeValue($_attribute)) ?>"
+                       title="<?php echo $block->escapeHtml($block->getAttributeLabel($_attribute)) ?>"
+                       class="input-text <?php /* @escapeNotVerified */ echo $block->getAttributeValidationClass($_attribute) ?>"
+                       maxlength="<?php /* @escapeNotVerified */ echo $maxQueryLength;?>" />
+                <li>
+                    <label for="category_search_field">Search by Category:</label>
+                    <select name="cat" id="category_search_field">
+                        <option value="">-- Any Category --</option>
+                        <?php foreach ($this->getStoreCategories() as $_category): ?>
+            
+                        <?php if($_category->hasChildren()): ?>
+                              <option class="parent-cat" value="<?php echo $_category->getId(); ?>"><?php echo $_category->getName();?></option>
+                          <?php if($_category->getIsActive()) : ?>
+                                    <option value="<?php echo $_category->getId(); ?>"<?php echo ($this->getRequest()->getQuery('cat') == $_category->getId() ? ' selected="selected"': "") ?>><?php echo $_category->getName(); ?></option>
+                        <?php endif; ?>
+                        <?php elseif($_category->getIsActive()): ?>
+                        <option value="<?php echo $_category->getId(); ?>"><?php echo $_category->getName();?></option>
+                        <?php endif; ?>
+                        <?php endforeach ?>
+            
+                    </select>
+                </li>
+            <?php endswitch; ?>
+            </div>
+        </div>
+    <?php endforeach; ?>
+</fieldset>
+<div class="actions-toolbar">
+  <div class="primary">
+    <button type="submit"
+            class="action search primary"
+            title="<?php echo $block->escapeHtml(__('Search')) ?>">
+        <span><?php /* @escapeNotVerified */ echo __('Search') ?></span>
+    </button>
+  </div>
+</div>
+</form>
+<script>
+require([
+    "jquery",
+    "mage/mage",
+    "mage/validation"
+], function($){
+    $('#form-validate').mage('validation', {
+            errorPlacement: function (error, element) {
+                var parent = element.parent();
+                if (parent.hasClass('range')) {
+                    parent.find(this.errorElement + '.' + this.errorClass).remove().end().append(error);
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            messages: {
+                'price[to]': {'greater-than-equals-to': 'Please enter a valid price range.'},
+                'price[from]': {'less-than-equals-to': 'Please enter a valid price range.'}
+            }
+        });
+});
+</script>

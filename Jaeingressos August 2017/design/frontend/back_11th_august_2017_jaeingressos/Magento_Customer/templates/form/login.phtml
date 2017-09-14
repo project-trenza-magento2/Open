@@ -1,0 +1,164 @@
+<?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Magento\Customer\Block\Form\Login $block */
+?>
+<?php
+/**
+ * Customer login form template
+ *
+ * @see \Magento\Customer\Block\Form\Login
+ * @var $block \Magento\Customer\Block\Form\Login
+ */
+?>
+<div class="login-wrap">
+<div class="social-login">
+    <div class="block">
+        <div class="block-title"> <strong><?php /* @escapeNotVerified */ echo __('Login with social networks') ?></strong></div>
+    </div>
+
+    <ul>
+        <li class="sl_clearfix" id="login"><div onclick="fblogin();" class="social_login_particular_button" title="Facebook" id="facebook_login">
+            <span class="f_icon_left icon_left_grid"></span> <input type="hidden" id="facebook-seller" name="facebook-seller">
+            <button name="send" class="fb_login inner_social_grid" type="button"><?php echo __('entrar com Facebook') ?></button>
+            <span class="f_icon_right icon_right_grid"></span> <img src="<?php echo $block->getViewFileUrl('Apptha_Sociallogin/css/images/ajax-loader.gif');  ?>" style="display: none" id="progress_image_facebooklogin">
+        </div>
+        </li>
+        <li class="sl_clearfix"><div title="Google+" class="social_login_particular_button" onclick="javascript:location.href = '<?php echo $this->getUrl('sociallogin/index/googlepost/') ?>'">
+            <span class="gplus_icon_left icon_left_grid"></span>
+            <input type="hidden" id="google-seller" name="google-seller">
+            <button name="send" class="google_login inner_social_grid" type="submit"><?php echo __('entrar com Google+') ?></button>
+            <span class="gplus_icon_right icon_right_grid"></span>
+        </div>
+        </li>
+    </ul>
+</div>
+
+<div class="block block-customer-login">
+    <div class="block-title">
+        <strong id="block-customer-login-heading" role="heading" aria-level="2"><?php /* @escapeNotVerified */ echo __('Login with email') ?></strong>
+    </div>
+    <div class="block-content" aria-labelledby="block-customer-login-heading">
+        <form class="form form-login"
+              action="<?php /* @escapeNotVerified */ echo $block->getPostActionUrl() ?>"
+              method="post"
+              id="login-form"
+              data-mage-init='{"validation":{}}'>
+            <?php echo $block->getBlockHtml('formkey'); ?>
+            <fieldset class="fieldset login" data-hasrequired="<?php /* @escapeNotVerified */ echo __('* Required Fields') ?>">
+                <!--<div class="field note"><?php /* @escapeNotVerified */ echo __('If you have an account, sign in with your email address.') ?></div>-->
+                <div class="field email required">
+                    <!--<label class="label" for="email"><span><?php /* @escapeNotVerified */ echo __('Email') ?></span></label>-->
+                    <div class="control">
+                        <input name="login[username]" tabindex="1" value="<?php echo $block->escapeHtml($block->getUsername()) ?>" <?php if ($block->isAutocompleteDisabled()) :?> autocomplete="off"<?php endif; ?> id="email" type="email" class="input-text" placeholder="<?php /* @escapeNotVerified */ echo __('email') ?>" title="<?php /* @escapeNotVerified */ echo __('Email') ?>" data-validate="{required:true, 'validate-email':true}">
+                        <button class="clear-email" onclick="event.preventDefault();document.getElementById('email').value='';"></button>
+                    </div>
+                </div>
+                <div class="field password required">
+                    <!--<label for="pass" class="label"><span><?php /* @escapeNotVerified */ echo __('Password') ?></span></label>-->
+                    <div class="control">
+                        <input name="login[password]" tabindex="2" type="password" <?php if ($block->isAutocompleteDisabled()) :?> autocomplete="off"<?php endif; ?> class="input-text" id="pass" placeholder="<?php /* @escapeNotVerified */ echo __('password') ?>" title="<?php /* @escapeNotVerified */ echo __('Password') ?>" data-validate="{required:true}">
+                        <button class="clear-password" onclick="event.preventDefault();document.getElementById('pass').value='';"></button>
+                    </div>
+                </div>
+                <?php echo $block->getChildHtml('form_additional_info'); ?>
+                <div class="actions-toolbar">
+                    <div class="clear-fix">
+                        <div class="keep-login"><input type="checkbox" id="keep_login" tabindex="3" name="keep_login" /><label for="keep_login"><?php echo __('Keep logged in'); ?></label> </div>
+                        <div class="secondary"><a class="action remind" href="javascript:void(0)<?php /* @escapeNotVerified   echo $block->getForgotPasswordUrl() */ ?>"><span><?php /* @escapeNotVerified */ echo iconv('ISO-8859-1', 'UTF-8', __('Forgot your password?')) ?></span></a></div>
+                    </div>
+                    <div class="primary"><button type="submit" class="action login primary" name="send" id="send2" tabindex="4"><span><?php /* @escapeNotVerified */ echo __('Sign In') ?></span></button></div>
+                    
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+</div>
+
+<div class="element_to_pop_up forgot_to_pop_up" style="display: none; background: #fff; width: 845px; height: 460px;">
+    <div class="close">X</div>
+    <div class="content">
+    <div class="loading-text" style="display: none;"></div>
+       <?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ *
+ * @var $block \Magento\Customer\Block\Account\Forgotpassword
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<form id="contactForm1" class="form password forget"
+      action="<?php /* @escapeNotVerified */ echo $block->getUrl('*/*/forgotpasswordpost') ?>"
+      method="post"
+      id="form-validate"
+      data-mage-init='{"validation":{}}'>
+    <fieldset class="fieldset" data-hasrequired="<?php /* @escapeNotVerified */ echo __('* Required Fields') ?>">
+        <div class="field note-title"><?php /* @escapeNotVerified */ echo __('Ops, I forgot my password?'); ?></div>
+        <div class="field note"><?php /* @escapeNotVerified */ echo __('Please enter your email address below to receive a password reset link.'); ?></div>
+        <div class="field email required">  
+        <div class="control">
+            <input type="email" name="email" alt="email" id="email_address" placeholder="<?php /* @escapeNotVerified */ echo __('Enter your email here!'); ?>" class="input-text" value="<?php echo $block->escapeHtml($block->getEmailValue()) ?>" data-validate="{required:true, 'validate-email':true}">
+        </div>
+        </div>
+        <?php echo $block->getChildHtml('form_additional_info'); ?>
+    </fieldset>
+    <div class="actions-toolbar">
+        <div class="primary">
+            <button type="submit" class="action submit primary"><span><?php /* @escapeNotVerified */ echo __('Send') ?></span></button>
+        </div>
+        
+    </div>
+</form>
+<div class="element_to_pop_up2 forgot_message_pop_up" style="display: none;">
+    <div class="icon-success"></div>
+    <div class="success-text"><?php /* @escapeNotVerified */ echo __('Email successfully sent!'); ?></div>
+    <div class="close-button close"><?php /* @escapeNotVerified */ echo __('close'); ?></div>
+</div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+  require(['jquery'], function($){
+    $('.remind').click(function(){
+        $('.forgot_to_pop_up').bPopup({
+            closeClass:'close',
+            positionStyle: 'fixed'
+        });
+    });
+
+   var frm = $('#contactForm1');
+
+    frm.submit(function (e) {
+        
+        $('#contactForm1').css('display','none');
+        $('.loading-text').css('display','block');
+        e.preventDefault();
+
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: function (data) {
+              
+              $('.loading-text').css('display','none');
+              $('.forgot_message_pop_up').css('display','block');
+            },
+            error: function (data) {
+               alert('fail'); 
+            },
+        });
+    });
+    
+  });
+
+</script>

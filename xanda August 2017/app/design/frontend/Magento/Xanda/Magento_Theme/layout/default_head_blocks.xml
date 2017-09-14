@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+		
+		<css src="css/font-awesome.css" order="20"/>
+		<css src="css/font-awesome.min.css" order="25"/>
+		<css src="css/bootstrap.min.css" order="30"/>
+		<css src="css/xanda.css" order="35"/>
+		<css src="css/xanda2.css" order="40"/>
+		
+		
+		
+
+		<css src="css/owl.carousel.min.css"/>
+		<css src="css/owl.theme.default.min.css"/>
+		<link src="js/owl.carousel.min.js"/>
+
+
+    </head>
+</page>

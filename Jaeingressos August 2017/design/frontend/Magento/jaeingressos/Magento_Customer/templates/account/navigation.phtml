@@ -1,0 +1,168 @@
+<?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+/** @var $block \Magento\Framework\View\Element\Html\Links */
+?>
+<?php /** @var $block \Magento\Customer\Block\Account\Navigation */ 
+    $urlInterface = \Magento\Framework\App\ObjectManager::getInstance ()->get ( 'Magento\Framework\UrlInterface' );
+    $currentUrl = $urlInterface->getCurrentUrl ();
+    $sellerGroupId = $customerId = $customerGroupId = $status = '';
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $customerSession = $objectManager->get('Magento\Customer\Model\Session');
+    $objectModelManager = \Magento\Framework\App\ObjectManager::getInstance ();
+    $customerId = $block->getRequest ()->getParam ( 'id' );
+    $sellerDatas = $objectModelManager->get ( 'Apptha\Marketplace\Model\Seller' );
+    $sellerDetails = $sellerDatas->load ( $customerId, 'customer_id' );
+    $logoName = $sellerDetails->getLogoName ();
+    $logoImage = $objectModelManager->get ( 'Magento\Store\Model\StoreManagerInterface' )->getStore ()->getBaseUrl ( \Magento\Framework\UrlInterface::URL_TYPE_MEDIA ) . 'Marketplace/Seller/Resized';
+    
+    $objectGroupManager = \Magento\Framework\App\ObjectManager::getInstance ();
+    $customerDatas = $customerSession->getCustomer ();
+    if ($customerSession->isLoggedIn ()) {
+     $customerId = $customerSession->getId ();
+     $customerGroupId = $customerDatas->getGroupId ();
+     $customerGroupSession = $objectGroupManager->get ( 'Magento\Customer\Model\Group' );
+     $customerGroupData = $customerGroupSession->load ( $customerGroupId );
+     $sellerGroupCode = $customerGroupData->getCode ();
+     $sellerGroupData = $customerGroupSession->load ( 'Marketplace Seller', 'customer_group_code' );
+     $sellerGroupId = $sellerGroupData->getId ();
+     $customerGroupSession = $objectGroupManager->get ( 'Apptha\Marketplace\Model\Seller' );
+     $status = $customerGroupSession->load ( $customerId, 'customer_id' )->getStatus ();
+    }
+    
+    $trenza = $block->getLayout()->createBlock('Trenza\Message\Block\Message');
+    $is_seller = $trenza->is_customer_seller($customerId);
+?>
+<?php 
+
+
+/* Profile Photo Block */
+$avatar = $block->getLayout()->createBlock('SY\Avatar\Block\Customer\Account\Avatar');
+?>
+
+<div class="block account-nav">
+    <div class="title">
+        <strong><?php /* @escapeNotVerified */ echo __('My Account'); ?></strong>
+    </div>
+    <div class="content">
+        <nav class="account-nav">
+            
+            <ul class="nav items">
+                <?php echo $block->getChildHtml();?>
+                <?php   if ($customerGroupId != $sellerGroupId || $status == 0) { ?>
+                <?php   //if ($is_seller != 'seller') { ?>
+                
+                <div class="field_store_logos">
+                    <div class="store_logos" style="overflow: hidden;"><img src="<?php echo $avatar->getAvatar(); ?>"/></div>
+                    <?php echo $customerSession->getCustomer()->getName(); ?>
+                    <!--<div class="cust-location"><i></i> <?php echo $customerSession->getCustomer()->getDefaultBilling(); ?></div>-->
+                </div>
+                <ul class="user-profile-icon nav items">
+                    <li class="my-profile nav item  <?php if($currentUrl==$block->getUrl('').'customer/account'){?>current<?php }?>"><a href="<?php echo $this->getUrl() ?>customer/account"><?php echo __('My profile'); ?></a></li>
+                    <li class="my-order nav item  <?php if($currentUrl==$block->getUrl('sales/order/history')){?>current<?php }?>"><a href="<?php echo $block->getUrl('sales/order/history') ?>"><?php echo __('My orders'); ?></a></li>
+                    <li class="my-favorite nav item  <?php if($currentUrl==$block->getUrl('').'wishlist'){?>current<?php }?>"><a href="<?php echo $this->getUrl() ?>wishlist"><?php echo __('Favorite'); ?></a></li>
+                    <li class="my-configuration nav item  <?php if($currentUrl==$block->getUrl('').'customer/account/edit'){?>current<?php }?>"><a href="<?php echo $this->getUrl() ?>customer/account/edit"><?php echo __('Settings'); ?></a></li>
+                    <li class="my-logout nav item  v"><a href="<?php echo $this->getUrl() ?>customer/account/logout"><?php echo __('Log out'); ?></a></li>
+                </ul>
+                 <?php }else if ($customerGroupId != $sellerGroupId || $status == 1) { ?>
+                 
+                 
+                 <ul class="nav items">
+                <?php echo $block->getChildHtml();?>
+                <?php 
+                    $name = $sellerDetails->getStoreName();
+                    $state =$sellerDetails->getState();
+                    $string = $sellerDetails->getState();
+                    
+                    if(!empty( $name ))
+                    {
+                        
+                    }
+                    else
+                    {
+                        $logoName ="";
+                        $name=$customerSession->getCustomer()->getName();
+                        $string ='';
+                        $state ='';
+                    }
+                    
+                ?> 
+                 <div class="field_store_logos">
+                    <div class="store_logos" style="overflow: hidden;">
+                        <a href="#">
+                        <?php if($is_seller=="seller"): ?>
+                        <?php if($logoName!="" ){?>
+                        
+                        <img src="<?php echo $logoImage.$logoName;?>" alt="store logo" class="market_place_store_img_logo" />
+                        <?php } else{?>
+                        <!--  <img src="<?php echo $block->getViewFileUrl('Apptha_Marketplace::images/no-store-logo.png');?>" />-->
+                        	<img src="<?php echo $avatar->getAvatar(); ?>"/>
+                        <?php  }?>
+                        <?php  else: ?>
+                        <img src="<?php echo $avatar->getAvatar(); ?>" />
+                        <?php  endif;?>
+                        </a>
+                    </div>
+                    
+                    <?php 
+                        echo $name;
+                     /*
+                     $firstname= preg_replace('/\W\w+\s*(\W*)$/', '$1', $name);
+                     $pieces = explode(' ', $name);
+                     $last_name= array_pop($pieces);
+                     echo $firstname;
+                     */
+                    
+                        
+        
+                        function initials($str) {
+                            $ret = '';
+                            foreach (explode(' ', $str) as $word)
+                                $ret .= strtoupper($word[0]);
+                            return $ret;
+                        }
+                    ?>
+                    <?php if($state !='' && $name!='' && $string!=''): ?>
+                    <div class="cust-location"><i></i><?php echo $state;?>-<?php echo initials($string); ?></div>       
+                    <?php endif; ?>
+                </div>
+                
+                <ul class="user-profile-icon nav items">
+                    <li class="my-sales nav item <?php if($currentUrl==$block->getUrl('marketplace/order/manage')||$currentUrl==$block->getUrl('marketplace/product/manage')||$currentUrl==$block->getUrl('marketplace/product/manage/?promo=1')){?>current active<?php }?>  "><a href="javascript:void(0)"><?php echo __('My sales'); ?></a>
+                        <ul>
+                            <li class="nav item <?php if($currentUrl==$block->getUrl('marketplace/product/manage')|| $currentUrl==$block->getUrl('marketplace/product/add')){?>current<?php }?>"><a href="<?php echo $block->getUrl('marketplace/product/manage') ?>"><?php echo iconv('ISO-8859-1', 'UTF-8', __('For sale')); ?></a></li>
+                            <li class="nav item <?php if($currentUrl==$block->getUrl('marketplace/order/manage')){?>current<?php }?>"><a href="<?php echo $block->getUrl('marketplace/order/manage') ?>"><?php echo __('Sold'); ?></a></li>
+                            <li class="nav item item-promo <?php if (isset($_GET['promo'])) {?>current<?php } ?>"><a href="<?php echo $block->getUrl('marketplace/product/manage') ?>?promo=1"><?php echo iconv('ISO-8859-1', 'UTF-8', __('In the promo')); ?></a></li>
+                        </ul>
+                    </li>
+
+                    <li class="my-order nav item  <?php if($currentUrl==$block->getUrl('sales/order/history')){?>current<?php }?>"><a href="<?php echo $block->getUrl('sales/order/history') ?>"><?php echo __('My orders'); ?></a></li>
+                     <li class="my-favorite nav item <?php if($currentUrl==$block->getUrl('wishlist')){?>current<?php }?>"><a href="<?php echo $block->getUrl('wishlist') ?>"><?php echo __('Favorite'); ?></a></li>
+        
+                    <li class="my-wallet nav item <?php
+           $objectManager = \Magento\Framework\App\ObjectManager::getInstance ();
+           $requestInterface = $objectManager->get ( 'Magento\Framework\App\RequestInterface' );
+           $routeName = $requestInterface->getRouteName ();
+           $controllerName = $requestInterface->getControllerName ();
+           $actionName = $requestInterface->getActionName ();
+        if ($currentUrl == $block->getUrl ( 'marketplace/seller/transactions' ) || $routeName == 'marketplace' && $controllerName == 'seller' && $actionName == 'transactions') {
+        ?>current
+        <?php }?>"><a href="<?php echo $block->getUrl('marketplace/seller/transactions') ?>"><?php echo __('My wallet'); ?></a></li>
+        
+        <li  class="my-configuration nav item <?php if($currentUrl==$block->getUrl('marketplace/seller/profile')){?>current<?php }?>"><a
+                href="<?php echo $block->getUrl('marketplace/seller/profile') ?>"><?php echo __('Settings'); ?></a></li>
+        <li  class="my-logout nav item"><a href="<?php echo $block->getUrl('customer/account/logout') ?>"><?php echo __('Log out'); ?></a></li>
+                </ul>
+            </ul>
+                 
+                 
+                 
+                 
+                  <?php }?>
+            </ul>
+        </nav>
+    </div>
+</div>
+

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+ 
+ <referenceContainer name="content">
+	
+	<block template="slider.phtml" class="Mageplaza\BetterSlider\Block\Slider" name="mageplaza_betterslider">
+		
+	  <action method="setSliderId">
+		<argument name="slider_id" xsi:type="string">1</argument>
+	  </action>
+
+	</block>
+	 <container name="appblock" as="appblock"  htmlTag="div" htmlClass="app-container" after="-">
+		<block class="Magento\Cms\Block\Block" name="HomeAppBlock">
+		  <arguments>
+		   <argument name="block_id" xsi:type="string">home-app-block</argument>
+		  </arguments>
+		</block>
+	 </container>
+ </referenceContainer>
+ 
+<referenceContainer name="full-wrapper">
+	<block class="Magento\Framework\View\Element\Template" name="home_slider" as="home_slider" template="Magento_Theme::home_slider_large.phtml" >
+      <arguments>
+         <argument translate="true" name="title" xsi:type="string">Highlight Products</argument>
+      </arguments>
+	</block>
+</referenceContainer>
+
+<!--
+<referenceContainer name="full-wrapper">
+	<block class="Magestore\Bannerslider\Block\SliderItem">
+  <action method="setSliderId">
+    <argument name="sliderId" xsi:type="string">1</argument>
+  </action>
+</block> 
+
+</referenceContainer>
+ -->
+</page>

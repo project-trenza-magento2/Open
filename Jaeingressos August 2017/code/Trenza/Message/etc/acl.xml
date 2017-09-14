@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Trenza_Message::message" title="message" sortOrder="40">
+                    <resource id="Trenza_Message::settings" title="Message Settings" sortOrder="10" >
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+		
+		<resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Trenza_Message::config" title="Message Settings" sortOrder="50" />
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+		
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Trenza_Message::message" title="Message" sortOrder="40">
+                    <resource id="Trenza_Message::messageview" title="All Message" sortOrder="10" >
+                        <resource id="Trenza_Message::message_delete" title="Delete Message" sortOrder="20" />
+                    </resource>
+                </resource>
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Trenza_Message::config_message" title="Message Section" sortOrder="50" />
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+
+
+    </acl>
+</config>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Location: magento_two/app/code/Trenza/Themeoption/etc/adminhtml/system.xml
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="option_tab" translate="label" sortOrder="1000">
+            <label>Trenza Softwares</label>
+        </tab>
+        <section id="message_settings" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Message Module Settings</label>
+            <tab>option_tab</tab>
+            <resource>Trenza_Message::config</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Message Module Settings</label>
+				<field id="message_filter" translate="label" type="textarea" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Message Filtering Patterns</label>
+					<comment>Put the patterns in new line.</comment>
+                </field>				
+            </group>
+        </section>
+    </system>
+</config>

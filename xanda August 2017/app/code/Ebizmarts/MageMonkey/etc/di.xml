@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Ebizmarts_MAgeMonkey Magento JS component
+ *
+ * @category    Ebizmarts
+ * @package     Ebizmarts_MageMonkey
+ * @author      Ebizmarts Team <info@ebizmarts.com>
+ * @copyright   Ebizmarts (http://ebizmarts.com)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Ebizmarts\MageMonkey\Model\Logger\Handler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="Ebizmarts\MageMonkey\Model\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">MageMonkeyLogger</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">Ebizmarts\MageMonkey\Model\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Newsletter\Model\Subscriber">
+        <plugin name="magemonkey-subscriber" type="Ebizmarts\MageMonkey\Model\Plugin\Subscriber" sortOrder="10"/>
+    </type>
+
+</config>

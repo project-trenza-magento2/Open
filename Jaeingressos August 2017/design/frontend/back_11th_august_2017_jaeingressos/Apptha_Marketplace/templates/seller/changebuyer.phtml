@@ -1,0 +1,80 @@
+<?php
+/**
+ * Apptha
+ * NOTICE OF LICENSE
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.apptha.com/LICENSE.txt
+ * ==============================================================
+ * MAGENTO EDITION USAGE NOTICE
+ * ==============================================================
+ * This package designed for Magento COMMUNITY edition
+ * Apptha does not guarantee correct work of this extension
+ * on any other Magento edition except Magento COMMUNITY edition.
+ * Apptha does not provide extension support in case of
+ * incorrect edition usage.
+ * ==============================================================
+ *
+ * @category Apptha
+ * @package Apptha_Marketplace
+ * @version 1.2
+ * @author Apptha Team <developers@contus.in>
+ * @copyright Copyright (c) 2017 Apptha. (http://www.apptha.com)
+ * @license http://www.apptha.com/LICENSE.txt
+ */
+?>
+<?php
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance ();
+$customerSession = $objectManager->get ( 'Magento\Customer\Model\Session' );
+if ($customerSession->isLoggedIn ()) {
+ $customerId = $customerSession->getId ();
+}
+$customerGroupId = $customerSession->getCustomer ()->getGroupId ();
+$objectModelManager = \Magento\Framework\App\ObjectManager::getInstance ();
+$resultData = $objectModelManager->get ( 'Apptha\Marketplace\Model\Seller' );
+$resultDatasCollection = $resultData->getCollection ();
+$resultDatas = $resultDatasCollection->getData ();
+$resultIds = array ();
+foreach ( $resultDatas as $resultId ) {
+ $sellerIds [] = $resultId ['customer_id'];
+}
+if ($customerGroupId != '4') {
+ ?>
+<div class="col-main">
+    <div class="my-account">
+        <div class="box-account box-info">
+            <p><?php echo iconv('ISO-8859-1', 'UTF-8', 'Para se tornar um vendedor você deve informar o mesmo e-mail cadastrado em sua conta no PayPal, só assim receberá os pagamentos das vendas realizadas.'); ?></p>
+            <p><?php echo iconv('ISO-8859-1', 'UTF-8', 'Confirmo que meus dados estão de acordo com o PayPal e aceito os Termos e Condições'); ?></p>
+            <form data-mage-init='{"validation":{}}' name="buyer-seller"
+                id="buyer-seller"
+                action="<?php  echo $block->getUrl('*/*/Saveseller')?>"
+                method="post">
+                <div class="input-box">
+                    <input type="checkbox" id="privacy_policy"
+                        name="privacy_policy" value="1"
+                        title="I agree the Terms and Condition"
+                        data-validate="{required:true}" /> <label
+                        for="privacy_policy"> Eu aceito os <a
+                        href="<?php echo $block->getUrl('privacy-policy-cookie-restriction-mode');?>"
+                        target="_blank"> <?php echo iconv('ISO-8859-1', 'UTF-8', 'Termos e Condições'); ?></a>
+                    </label>
+                </div>
+                <div class="actions-toolbar">
+                    <div class="primary">
+                        <button type="submit"
+                            class="action submit primary">
+                            <span><?php  echo __('Submit') ?></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<?php
+
+} else {
+    echo __ ( 'Admin Approval is required. Please wait until admin confirms your seller account.');
+ }?>

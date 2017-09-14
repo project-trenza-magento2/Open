@@ -1,0 +1,176 @@
+<?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+
+/**
+*  General template for displaying group of blocks devided into sections
+*/
+
+$group = $block->getGroupName();
+$groupCss = $block->getGroupCss();
+$groupBehavior = $block->getGroupBehaviour() ? $block->getGroupBehaviour() : '{"tabs":{"openedState":"active"}}';
+?>
+
+
+<?php 
+    /* called block from Apptha\Marketplace\Block\Seller\Profile*/
+    $imageBlock =  $block->getLayout()->createBlock('Apptha\Marketplace\Block\Seller\Profile');
+    $sellerProfileDetails = $imageBlock->getSellerProfile ();
+    $sellerDetails = $sellerProfileDetails ['seller_details'];
+    $countryDatas = $sellerProfileDetails ['country_list'];
+    $logoImage = $sellerProfileDetails ['logo_image'];
+    $bannerImage = $sellerProfileDetails ['banner_image'];
+    $objectModelManager = \Magento\Framework\App\ObjectManager::getInstance ();
+    
+    /* Profile Photo Block */
+    $avatar = $block->getLayout()->createBlock('SY\Avatar\Block\Customer\Account\Avatar');
+?>
+
+<?php
+
+    $sellerGroupId = $customerId = $customerGroupId = $status = '';
+    $urlInterface = \Magento\Framework\App\ObjectManager::getInstance ()->get ( 'Magento\Framework\UrlInterface' );
+    $currentUrl = $urlInterface->getCurrentUrl ();
+    $objectGroupManager = \Magento\Framework\App\ObjectManager::getInstance ();
+    $customerSession = $objectGroupManager->get ( 'Magento\Customer\Model\Session' );
+    $customerDatas = $customerSession->getCustomer ();
+    if ($customerSession->isLoggedIn ()) {
+     $customerId = $customerSession->getId ();
+     $customerGroupId = $customerDatas->getGroupId ();
+     $customerGroupSession = $objectGroupManager->get ( 'Magento\Customer\Model\Group' );
+     $customerGroupData = $customerGroupSession->load ( $customerGroupId );
+     $sellerGroupCode = $customerGroupData->getCode ();
+     $sellerGroupData = $customerGroupSession->load ( 'Marketplace Seller', 'customer_group_code' );
+     $sellerGroupId = $sellerGroupData->getId ();
+     $customerGroupSession = $objectGroupManager->get ( 'Apptha\Marketplace\Model\Seller' );
+     $status = $customerGroupSession->load ( $customerId, 'customer_id' )->getStatus ();
+    }
+    
+    $reviewSellerId = $this->getRequest ()->getParam ( 'seller_id' );
+?>
+
+
+<?php if ($detailedInfoGroup = $block->getGroupChildNames($group, 'getChildHtml')):?>
+    <div class="sections <?php /* @escapeNotVerified */ echo $groupCss ?>">
+        <?php $layout = $block->getLayout(); ?>
+        <div class="section-items <?php /* @escapeNotVerified */ echo $groupCss ?>-items" data-mage-init='<?php /* @escapeNotVerified */ echo $groupBehavior ?>'>
+            <?php $i=1; foreach ($detailedInfoGroup as $name):?>
+                <?php
+                    if($i==1):
+                    $html = $layout->renderElement($name);
+                    if (!trim($html) && ($block->getUseForce() != true)):
+                        continue;
+                    endif;
+                    $alias = $layout->getElementAlias($name);
+                    $label = $block->getChildData($alias, 'title');
+                ?>
+                <div class="section-item-title <?php /* @escapeNotVerified */ echo $groupCss ?>-item-title" data-role="collapsible">
+                    <a class="<?php /* @escapeNotVerified */ echo $groupCss ?>-item-switch" data-toggle="switch" href="#<?php /* @escapeNotVerified */ echo $alias; ?>"><?php /* @escapeNotVerified */ echo $label; ?></a>
+                </div>
+                <div class="section-item-content <?php /* @escapeNotVerified */ echo $groupCss ?>-item-content" id="<?php /* @escapeNotVerified */ echo $alias; ?>" data-role="content"><?php /* @escapeNotVerified */ echo $html; ?></div>
+            <?php endif; $i++; endforeach;?>
+            
+                <div class="tab-right section-item-title <?php /* @escapeNotVerified */ echo $groupCss ?>-item-title" data-role="collapsible">
+                    <a class="<?php /* @escapeNotVerified */ echo $groupCss ?>-item-switch" data-toggle="switch" href="#contact-tab">Conta</a>
+                </div>
+                <div class="section-item-content <?php /* @escapeNotVerified */ echo $groupCss ?>-item-content" id="contact-tab" data-role="content" >
+                    
+                    
+                    
+
+
+
+    <?php if($customerSession->isLoggedIn()) { ?>
+      <div class="user-acoount-wrapper mobile-wrapper account-nav">
+          <div class="field_store_logos">
+                <div class="store_logos" style="overflow: hidden;">
+                    <?php if($sellerDetails->getLogoName()!=''){?>
+                        <div class="store_logos"><img src="<?php echo $logoImage.$sellerDetails->getLogoName(); ?>" alt="store logo" class="store_img" /></div>
+                    <?php }else{?>
+                    	<div class="store_logos"><img src="<?php echo $avatar->getAvatar(); ?>"/></div>
+                     <?php }?>
+                </div>
+                <?php  echo $name = $sellerDetails->getStoreName();  ?>
+                <div class="cust-location"><i></i><?php echo $sellerDetails->getState();?></div>     
+         </div>
+        <ul class="user-profile-icon">
+        
+        <?php 
+            $objectModelManager = \Magento\Framework\App\ObjectManager::getInstance ();
+            $seller = $objectModelManager->get ( 'Apptha\Marketplace\Helper\Data' );
+            $assignProduct = $seller->getAssignProduct ();
+            $isSellerReviewEnabled = $seller->isSellerReviewEnabled ();
+        
+          if ($customerGroupId != $sellerGroupId || $status == 0) { ?>
+            
+            <li class="my-profile"><a href="<?php echo $this->getUrl() ?>customer/account"><?php echo __('My profile'); ?></a></li>
+            <li class="my-favorite"><a href="<?php echo $this->getUrl() ?>wishlist"><?php echo __('Favorite'); ?></a></li>
+            <li class="my-configuration"><a href="<?php echo $this->getUrl() ?>customer/account/edit"><?php echo __('Configuration'); ?></a></li>
+            <li class="my-logout"><a href="<?php echo $this->getUrl() ?>customer/account/logout"><?php echo __('Logout'); ?></a></li>
+         <?php } else if ($customerGroupId != $sellerGroupId || $status == 1) { ?>
+         <ul class="user-profile-icon nav items">
+            <li id="mobile" class="my-sales mobile nav item <?php if($currentUrl==$block->getUrl('marketplace/order/manage')||$currentUrl==$block->getUrl('marketplace/product/manage')||$currentUrl==$block->getUrl('marketplace/product/manage/?promo=1')){?>current active<?php }?>  "><a href="javascript:void(0)"><?php echo __('My sales'); ?></a>
+                <ul>
+                    <li class="nav item <?php if($currentUrl==$block->getUrl('marketplace/product/manage')|| $currentUrl==$block->getUrl('marketplace/product/add')){?>current<?php }?>"><a href="<?php echo $block->getUrl('marketplace/product/manage') ?>"><?php echo iconv('ISO-8859-1', 'UTF-8', __('For sale')); ?></a></li>
+                    <li class="nav item <?php if($currentUrl==$block->getUrl('marketplace/order/manage')){?>current<?php }?>"><a href="<?php echo $block->getUrl('marketplace/order/manage') ?>"><?php echo __('Sold'); ?></a></li>
+                    <li class="nav item item-promo <?php if (isset($_GET['promo'])) {?>current<?php } ?>"><a href="<?php echo $block->getUrl('marketplace/product/manage') ?>?promo=1"><?php echo iconv('ISO-8859-1', 'UTF-8', __('In the promo')); ?></a></li>
+                </ul>
+            </li>
+            
+            <li class="my-order nav item  <?php if($currentUrl==$block->getUrl('sales/order/history')){?>current<?php }?>"><a href="<?php echo $block->getUrl('sales/order/history') ?>"><?php echo __('My orders'); ?></a></li>
+                     <li class="my-favorite nav item <?php if($currentUrl==$block->getUrl('wishlist')){?>current<?php }?>"><a href="<?php echo $block->getUrl('wishlist') ?>"><?php echo __('Favorite'); ?></a></li>
+        
+                    <li class="my-wallet nav item <?php
+           $objectManager = \Magento\Framework\App\ObjectManager::getInstance ();
+           $requestInterface = $objectManager->get ( 'Magento\Framework\App\RequestInterface' );
+           $routeName = $requestInterface->getRouteName ();
+           $controllerName = $requestInterface->getControllerName ();
+           $actionName = $requestInterface->getActionName ();
+        if ($currentUrl == $block->getUrl ( 'marketplace/seller/transactions' ) || $routeName == 'marketplace' && $controllerName == 'seller' && $actionName == 'transactions') {
+        ?>current
+        <?php }?>"><a href="<?php echo $block->getUrl('marketplace/seller/transactions') ?>"><?php echo __('My wallet'); ?></a></li>
+        
+        <li  class="my-configuration nav item <?php if($currentUrl==$block->getUrl('marketplace/seller/profile')){?>current<?php }?>"><a
+                href="<?php echo $block->getUrl('marketplace/seller/profile') ?>"><?php echo __('Settings'); ?></a></li>
+        <li  class="my-logout nav item"><a href="<?php echo $block->getUrl('customer/account/logout') ?>"><?php echo __('Log out'); ?></a></li>
+        
+         </ul>
+         <?php } ?>
+        
+        </ul>
+        <div class="mobile-product-add" style="display: none;">
+            
+            <?php if(!$customerSession->isLoggedIn()) { ?>
+            <a href="<?php echo $block->getUrl('marketplace/seller/login') ?>"><?php echo __('Vender ingresso'); ?></a>
+        
+            <?php } else if($is_seller=="seller"){ ?> 
+            <li><a href="<?php echo $this->getUrl() ?>marketplace/product/add" style=""><?php echo __('Vender ingresso'); ?></a>
+            <?php } else if($is_seller=="customer"){ ?>
+            <a href="<?php echo $this->getUrl('marketplace/general/changebuyer') ?>" style=""><?php echo __('Vender ingresso'); ?></a>
+            <?php } ?>
+            
+        </div>
+      </div>
+      
+   
+    <?php }else{ ?>
+        <ul class="header links">
+            <li><a href="<?php echo $this->getUrl('customer/account/login')?>"><?php echo __('Login'); ?></a></li>
+            <li><a href="<?php echo $this->getUrl('customer/account/create') ?>"><?php echo __('Create an account'); ?></a></li>
+        </ul>
+    <?php } ?>
+
+                    
+                    
+                    
+                </div>
+        </div>
+    </div>
+<?php endif; ?>

@@ -1,0 +1,67 @@
+<?php 
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $customerSession = $objectManager->get('Magento\Customer\Model\Session');
+    $customerSession = $objectManager->get('Magento\Framework\App\Http\Context');
+    $isLoggedIn = $customerSession->getValue(\Magento\Customer\Model\Context::CONTEXT_AUTH);
+    
+?>
+<?php #if($customerSession->isLoggedIn()): ?>
+<?php if($isLoggedIn): ?>
+<?php 
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $customerSession = $objectManager->create('Magento\Customer\Model\Session');
+    if($customerSession->getPhpbbSet() != 'set'){
+        $customerSession->setPhpbbSet('set');
+        $customerId = base64_encode($customerSession->getId());
+        header("Location:https://xanda.sg/login_regestration/login.php?u=".$customerId);
+        #echo 'check';
+    }
+   #echo $customerId = $customerSession->getId();
+    #echo $customerId = base64_decode($customerId);
+    
+    #$customerSession->getPhpbbSet();
+    
+    
+    #$customerSession->unsMyValue();
+?>
+
+
+<p class="sign-in">
+    <i class="fa fa-user user" aria-hidden="true"></i>
+    <a href="<?php echo $this->getUrl(); ?>customer/account/">My Account</a> | 
+    <a href="<?php echo $this->getUrl() ?>customer/account/logout">Logout</a>
+</p>
+
+<?php else: ?>
+<p class="sign-in">
+    <i class="fa fa-user user" aria-hidden="true"></i>
+    <a href="<?php echo $this->getUrl(); ?>customer/account/login/">Log In</a> | 
+    <a href="<?php echo $this->getUrl(); ?>customer/account/create/">Register</a>
+</p>
+<?php 
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $customerSession = $objectManager->create('Magento\Customer\Model\Session');
+    $customerSession->unsPhpbbSet();
+?>
+
+<?endif ?>
+
+
+
+<script>
+ require([
+    "jquery"
+    ], function($){
+    $( document ).ready(function() {
+        $( document ).ajaxComplete(function( event, xhr, settings ) {
+            //alert(settings.url);
+            total_price = $('#minicart-content-wrapper .price-wrapper .price').html();
+            if(total_price){
+                $('.mini-cart-total-price').html(total_price);
+            }
+        });        
+    });
+});
+
+
+</script>

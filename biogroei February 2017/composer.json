@@ -1,0 +1,18 @@
+{
+    "name": "vendic/biogroei",
+    "description": "N/A",
+    "require": {
+        "php": "~7.0.0",
+    },
+    "type": "magento2-theme",
+    "version": "100.0.2",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ]
+    }
+}

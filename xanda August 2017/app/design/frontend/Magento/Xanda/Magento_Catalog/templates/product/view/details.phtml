@@ -1,0 +1,160 @@
+<?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $product = $objectManager->create('Magento\Catalog\Model\Product')->load($block->getProduct()->getId());        
+    $images = $product->getMediaGalleryImages();
+    foreach($images as $_img){
+        $_image_collection[] = $_img->getUrl();
+    }
+?>
+
+
+<?php if ($detailedInfoGroup = $block->getGroupChildNames('detailed_info', 'getChildHtml')):?>
+    <div class="product info detailed">
+        <?php $layout = $block->getLayout(); ?>
+        <div class="product data items product-details-tab" data-mage-init='{"tabs":{"openedState":"active"}}'>
+            <?php foreach ($detailedInfoGroup as $name):?>
+                <?php
+                    $html = $layout->renderElement($name);
+                    if (!trim($html)) {
+                        continue;
+                    }
+                    $alias = $layout->getElementAlias($name);
+                    $label = $block->getChildData($alias, 'title');
+                ?>
+              
+            <?php endforeach;?>
+            
+            
+            
+            <?php if( $block->getProduct()->getDescription() != '' ): ?>
+            <div class="data item title"
+                 aria-labeledby="tab-label-intro-title"
+                 data-role="collapsible" id="tab-label-intro">
+                <a class="data switch"
+                   tabindex="-1"
+                   data-toggle="switch"
+                   href="#intro"
+                   id="tab-label-intro-title">
+                    <?php /* @escapeNotVerified */ echo __('INTRO'); ?>
+                </a>
+            </div>
+            <div class="data item content" id="intro" data-role="content">
+                <?php //echo $_image_collection[0]; ?>
+                
+                <div class="row intro1" style="background: url('<?php echo $_image_collection[0]; ?>') left center no-repeat;background-size: 500px;" >
+                    <div class="col-sm-5"></div>
+                    <div class="col-sm-7"><?php echo $block->getProduct()->getDescription(); ?></div>
+                </div>
+                
+                <?php if( $block->getProduct()->getData('intro_one') != '' ): ?>
+                <div class="row intro2" style="background: url('<?php echo $_image_collection[1]; ?>') right center no-repeat;background-size: 500px;">
+                    <div class="col-sm-7"><?php echo $block->getProduct()->getData('intro_one'); ?></div>
+                    <div class="col-sm-5"></div>
+                </div>
+                <?php endif; ?>
+                
+                <?php if( $block->getProduct()->getData('intro_two') != '' ): ?>
+                <div class="row intro3" style="background: url('<?php echo $_image_collection[2]; ?>') left center no-repeat;background-size: 500px;">
+                    <div class="col-sm-5"></div>
+                    <div class="col-sm-7"><?php echo $block->getProduct()->getData('intro_two'); ?></div>
+                </div>
+                <?php endif; ?>
+                
+                <?php if( $block->getProduct()->getData('intro_three') != '' ): ?>
+                <div class="row intro4" style="background: url('<?php if($_image_collection[3] && $_image_collection[3] !='' ) {echo $_image_collection[3];} ?>') right center no-repeat;">
+                    <div class="col-sm-7"><?php echo $block->getProduct()->getData('intro_three'); ?></div>
+                    <div class="col-sm-5"></div>
+                </div>
+                <?php endif; ?>
+                
+            </div>
+            <?php endif; ?>
+            
+            
+            <?php if( $block->getProduct()->getData('specifications') != '' ): ?>
+            <div class="data item title"
+                 aria-labeledby="tab-label-tech-title"
+                 data-role="collapsible" id="tab-label-tech">
+                <a class="data switch"
+                   tabindex="-1"
+                   data-toggle="switch"
+                   href="#tech"
+                   id="tab-label-tech-title">
+                    <?php /* @escapeNotVerified */ echo __('TECH SPECS'); ?>
+                </a>
+            </div>
+            <div class="data item content" id="tech" data-role="content">
+                <?php echo $block->getProduct()->getData('specifications'); ?>
+            </div>
+            <?php endif; ?>
+            
+            <?php if( $block->getProduct()->getData('system_requirements') != '' ): ?>
+            <div class="data item title"
+                 aria-labeledby="tab-label-system-title"
+                 data-role="collapsible" id="tab-label-system">
+                <a class="data switch"
+                   tabindex="-1"
+                   data-toggle="switch"
+                   href="#system"
+                   id="tab-label-system-title">
+                    <?php /* @escapeNotVerified */ echo __('SYSTEM REQUIREMENT'); ?>
+                </a>
+            </div>
+            <div class="data item content" id="system" data-role="content">
+                 <?php echo $block->getProduct()->getData('system_requirements'); ?>
+            </div>
+            <?php endif; ?>
+            
+            
+            <div class="data item title" aria-labeledby="tab-label-gallery-title" data-role="collapsible" id="tab-label-gallery">
+                <a class="data switch" tabindex="-1" data-toggle="switch" href="#gallery" id="tab-label-gallery-title">
+                    <?php /* @escapeNotVerified */ echo __('GALLERY IMAGES'); ?>
+                </a>
+            </div>
+            <div class="data item content" id="gallery" data-role="content">
+                <ol id="product-gallery" class="owl-carousel owl-theme product-items">
+                    <?php foreach($images as $child): ?>
+                            <li class="product-item">
+                              <img src="<?php echo $child->getUrl(); ?>" />
+                            </li>
+                    <?php endforeach; ?>
+                 </ol>
+            </div>
+                
+            
+        </div>
+    </div>
+<?php endif; ?>
+
+
+
+<script>
+    require([
+    'jquery'
+    ], function ($) {
+            jQuery(document).ready(function() {
+                var owl = jQuery("#product-gallery");
+              owl.owlCarousel({
+                     responsive: {
+                      0: {
+                        items: 1
+                      }
+                    },
+                  nav:true,
+                   dots: false,
+                   margin: 0
+                 
+              });
+            });
+    });
+</script>

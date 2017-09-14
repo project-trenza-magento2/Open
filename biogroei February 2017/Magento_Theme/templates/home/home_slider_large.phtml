@@ -1,0 +1,31 @@
+<div class="home_slider clearfix">
+    <?php echo $this->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('home_slider')->toHtml();?>
+</div>
+<script type="text/javascript">
+    require([
+    "jquery"
+    ], function($){
+        $(document).ready(function() {
+            jQuery("#homeslider").owlCarousel({
+                items: 1,
+                autoplay: true,
+                dots: true,
+                nav: false,
+                loop: true
+            });
+        });
+    });
+</script>
+<div class="mobile-search-block"></div>
+<script type="text/javascript">
+require([
+    'jquery'
+], function ($) {
+    'use strict';
+    jQuery(document).ready(function() {  
+        if(jQuery(window).width() < 767 ){
+            jQuery(".block-search").appendTo(".mobile-search-block");
+        }
+    });                 
+});
+</script>

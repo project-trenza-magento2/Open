@@ -1,0 +1,271 @@
+<?php
+/**
+ * Apptha
+ * NOTICE OF LICENSE
+ * This source file is subject to the EULA
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.apptha.com/LICENSE.txt
+ * ==============================================================
+ * MAGENTO EDITION USAGE NOTICE
+ * ==============================================================
+ * This package designed for Magento COMMUNITY edition
+ * Apptha does not guarantee correct work of this extension
+ * on any other Magento edition except Magento COMMUNITY edition.
+ * Apptha does not provide extension support in case of
+ * incorrect edition usage.
+ * ==============================================================
+ *
+ * @category Apptha
+ * @package Apptha_Marketplace
+ * @version 1.2
+ * @author Apptha Team <developers@contus.in>
+ * @copyright Copyright (c) 2017 Apptha. (http://www.apptha.com)
+ * @license http://www.apptha.com/LICENSE.txt
+ */
+?>
+<?php
+    $objectModelManager = \Magento\Framework\App\ObjectManager::getInstance ();
+    
+
+    
+    $customerId = $block->getRequest ()->getParam ( 'id' );
+    $sellerDatas = $objectModelManager->get ( 'Apptha\Marketplace\Model\Seller' );
+    $sellerDetails = $sellerDatas->load ( $customerId, 'customer_id' );
+    $seller_id = $sellerDetails->getId();
+    
+    $customerSession = $objectModelManager->get('Magento\Customer\Model\Session');
+    $customerDatas = $customerSession->getCustomer ();
+    if ($customerSession->isLoggedIn ()) {
+        $session_customer_id = $customerSession->getId ();
+    }else{
+        $session_customer_id ='';
+    } 
+    
+    $logoName = $sellerDetails->getLogoName ();
+    $bannerName = $sellerDetails->getBannerName ();
+    $sellerContact = $sellerDetails->getContact ();
+    $sellerStoreName = $sellerDetails->getStoreName ();
+    $sellerEmail = $sellerDetails->getEmail ();
+    $sellerDesc = $sellerDetails->getDesc ();
+    $sellerFacebookId = $sellerDetails->getFacebookId ();
+    $sellerTwitterId = $sellerDetails->getTwitterId ();
+    $sellerGoogleId = $sellerDetails->getGoogleId ();
+    $sellerLinkedId = $sellerDetails->getLinkedId ();
+    $sellerState = $sellerDetails->getState ();
+    $sellerCountry = $sellerDetails->getCountry ();
+    $logoImage = $objectModelManager->get ( 'Magento\Store\Model\StoreManagerInterface' )->getStore ()->getBaseUrl ( \Magento\Framework\UrlInterface::URL_TYPE_MEDIA ) . 'Marketplace/Seller/Resized';
+    $bannerImage = $objectModelManager->get ( 'Magento\Store\Model\StoreManagerInterface' )->getStore ()->getBaseUrl ( \Magento\Framework\UrlInterface::URL_TYPE_MEDIA ) . 'Marketplace/Sellerbanner/Resized';
+?>
+<?php if($session_customer_id != $seller_id): ?>
+<?php $Seller_profile = 1; ?>
+<script>
+require([ 'jquery','jquery/ui'], function($){
+    jQuery('.hd_seller').hide();
+    jQuery('.form.seller-contact-account ').hide();
+});
+</script>
+<?php else: ?>
+<?php $Seller_profile = 0; ?>
+<?php endif; ?>
+<div class="mp_profiles_container">
+   <!--
+    <div class="seller_store_banner">
+        <p class="mp_profiles_banner">
+         <?php if($bannerName!=""){?>
+           <img src="<?php echo $bannerImage.$bannerName;?>"
+                alt="store banner" class="market_place_store_img_banner">
+           <?php } else{?>
+           <img
+                src="<?php echo $block->getViewFileUrl('Apptha_Marketplace::images/no-banner-image.png');?>">
+        
+      <?php  }?>
+        </p>
+    </div>
+    -->
+    <div class="mp_profiles-info-wrapper">
+        <p class="mp_profiles_logo hd_seller">
+        <?php if($logoName!=""){?>
+           <img src="<?php echo $logoImage.$logoName;?>"
+                alt="store logo" class="market_place_store_img_logo">
+           <?php } else{?>
+           <img
+                src="<?php echo $block->getViewFileUrl('Apptha_Marketplace::images/no-store-logo.png');?>">
+
+      <?php  }?>
+       </p>
+       
+       <?php if($Seller_profile ==0 ): ?>
+        <div class="sellers_store_info hd_seller">
+            <div class="contact-wrapper ">
+                <span class="contact-number"><a><?php echo $sellerContact;?></a></span>
+                <span class="contact-mail"><a
+                    href="mailto:<?php echo $sellerEmail;?>"><?php echo $sellerEmail;?></a></span>
+            </div>
+            <h2><?php echo ucfirst($sellerStoreName); ?></h2>
+        </div>
+        <?php endif; ?>
+        <div class="sellers_store_info">
+            <div class="container">
+                
+                <?php 
+                $objectGroupManager = \Magento\Framework\App\ObjectManager::getInstance ();
+                $customerGroupSession = $objectGroupManager->get ( '\Magento\Customer\Model\Session' );
+                $customer_id = $customerGroupSession->getCustomer()->getId();
+                $seller_id = $customerId;
+                $follow =  $block->getLayout()->createBlock('Trenza\Message\Block\Message');
+               
+                if($customer_id==$seller_id){ 
+                  
+                ?>
+                 <div class='follower_count_area'><a class='follower_count' count='<?php echo $follow->count_followers($seller_id); ?>'><?php echo $follow->count_followers($seller_id); ?></a>  <?php if($follow->count_followers($seller_id) > 1){echo 'Followers';}elseif($follow->count_followers($seller_id) == 1 || $follow->count_followers($seller_id) < 1){echo 'Follower';} ?>  </div>
+                <?php  }
+                elseif($customer_id == ''){?>
+                 <div class='follower_count_area'><a class='follower_count' count='<?php echo $follow->count_followers($seller_id); ?>'><?php echo $follow->count_followers($seller_id); ?></a>  <?php if($follow->count_followers($seller_id) > 1){echo 'Followers';}elseif($follow->count_followers($seller_id) == 1 || $follow->count_followers($seller_id) < 1){echo 'Follower';} ?>  </div>
+                    <a href="<?php echo $this->getUrl('customer/account/login');?>" class="btn">Follow</a>
+                <?php
+                }else if($customer_id != ''){
+                //$follow->empty_table('trenza_follow');
+                
+                //$follow->view_follow_data();
+                $follow_status = $follow->follow_or_not($customer_id,$seller_id);
+                if($follow_status){
+                    $follow_unfollow = 'unfollow';
+                    $follow_unfollow_btn = 'unfollow';
+                }else{
+                    $follow_unfollow = 'follow';
+                    $follow_unfollow_btn = 'follow';
+                }
+                if(isset($_POST['followrequest'])){
+                    $follow = $_POST[''];
+                    $follower = $_POST[''];
+                } 
+                
+                ?>
+                
+                <div class='follower_count_area'><a class='follower_count' count='<?php echo $follow->count_followers($seller_id); ?>'><?php echo $follow->count_followers($seller_id); ?></a>  <?php if($follow->count_followers($seller_id) > 1){echo 'Followers';}elseif($follow->count_followers($seller_id) == 1 || $follow->count_followers($seller_id) < 1){echo 'Follower';} ?>  </div>
+                    <butotn data-status="<?php echo $follow_unfollow; ?>" count="<?php echo $follow->count_followers($seller_id); ?>" href="#" data-id="<?php echo $follow_status; ?>" data-follower-id="<?php echo $customer_id; ?>" data-follow-id="<?php echo $seller_id; ?>"  id="follow-unfollow" class="follow-unfollow btn <?php echo $follow_unfollow_btn; ?>"><?php echo $follow_unfollow; ?></butotn>
+                <?php } ?>
+                
+                
+                
+               </div>
+        </div>
+        
+        <div class="social-media-wrapper">
+            <a href="<?php echo $sellerLinkedId?>" target="_blank"
+                title="LinkedIn" class="linked-in">&nbsp;</a> <a
+                href="<?php echo $sellerGoogleId?>" target="_blank"
+                title="Facebook" class="facebook">&nbsp;</a> <a
+                href="<?php echo $sellerTwitterId?>" target="_blank"
+                title="twitter" class="twitter">&nbsp;</a> <a
+                href="<?php echo $sellerFacebookId?>" target="_blank"
+                title="GooglePlus" class="gplus">&nbsp;</a>
+        </div>
+    </div>
+</div>
+<div class="mp_profiles_desc" style="display: none;">
+    <p class="mp_profiles_desc">
+     <?php echo strip_tags($sellerDesc);?></p>
+</div>
+<?php if( $follow->count_followers($seller_id) != 0 ): ?>
+<div class="seller_follower_list hd_seller">
+    <h3><?php echo __('My Followers'); ?></h3>
+    <?php  
+    $all_follower_id = $follow->all_follower_id($seller_id);  
+    $avatar = $block->getLayout()->createBlock('SY\Avatar\Block\Customer\Account\Avatar');
+    
+    echo '<ul class="follower-list">';
+    foreach($all_follower_id as $follower_id){
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $customer = $objectManager->create('Magento\Customer\Model\Customer')->load($follower_id);
+        echo '<li>
+        <img src="'.$avatar->getAvatarbyid($follower_id).'">
+        <span>'.$customer->getName().'<span>
+        </li>';
+    }
+    echo "</ul>";
+    ?>
+</div>
+<?php endif; ?>
+<script>
+require([
+    "jquery"
+    ], function($){
+            jQuery("#follow-unfollow").on('click', function(){
+            	var id = jQuery(this).attr('data-id');
+            	var status = jQuery(this).attr('data-status');
+            	var follower_id = jQuery(this).attr('data-follower-id');
+            	var follow_id = jQuery(this).attr('data-follow-id');
+            	var follower_count = parseInt(jQuery(this).attr('count'));
+
+            	$('#follow-unfollow').attr('disabled', true);
+            	$('#follow-unfollow').css('opacity','0.6');
+			     $.ajax({
+		           type: "POST",
+		           url: "<?php echo $this->getUrl('message/index/'); ?>"+status,
+		           data: {  
+		                follower_id:follower_id,
+		                follow_id: follow_id,
+		            },
+		           success: function(data){
+		           		if (status == 'unfollow') {
+		           			 $("#follow-unfollow").removeClass("unfollow");
+				           	 $("#follow-unfollow").addClass("follow");
+				           	 $('#follow-unfollow').removeAttr('disabled');
+		            		 $('#follow-unfollow').css('opacity','1');
+		            		 $("#follow-unfollow").html('Follow');
+		            		 $("#follow-unfollow").attr('data-status','follow');
+		            		 $("#follow-unfollow").attr('count',follower_count-1);
+                              $(".follower_count").html(follower_count-1);
+		           		};
+		           		if (status == 'follow') {
+		           			 $("#follow-unfollow").removeClass("follow");
+				           	 $("#follow-unfollow").addClass("unfollow");
+				           	 $('#follow-unfollow').removeAttr('disabled');
+		            		 $('#follow-unfollow').css('opacity','1');
+		            		 $("#follow-unfollow").html('Unfollow');
+		            		 $("#follow-unfollow").attr('data-status','unfollow');
+		            		 $("#follow-unfollow").attr('count',follower_count+1);
+                              $(".follower_count").html(follower_count+1);
+		           		};
+		           	 
+		           },
+		        });
+			     return false;
+			});
+
+    });
+</script>
+
+<style>
+    .btn {
+        cursor: pointer;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        border-radius: 5px;
+        border: 1px solid #a6a6a6;
+            border-top-color: rgb(166, 166, 166);
+            border-bottom-color: rgb(166, 166, 166);
+        border-top-color: #bdbdbd;
+        border-bottom-color: #8b8a8b;
+        padding: 9px 14px 9px;
+        color: #666666;
+        font-size: 11px;
+        background-position: 0px 0px;
+        text-shadow: 0 1px 0 #fff;
+        font-weight: bold;
+        background-color: #ffffff;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e8e8e8));
+        background-image: -webkit-linear-gradient(top, #ffffff, #e8e8e8);
+        background-image: -moz-linear-gradient(top, #ffffff, #e8e8e8);
+        background-image: -ms-linear-gradient(top, #ffffff, #e8e8e8);
+        background-image: -o-linear-gradient(top, #ffffff, #e8e8e8);
+        background-image: linear-gradient(top, #ffffff, #e8e8e8);
+        -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+        -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+        box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+    }
+    .follow{}
+    .unfollow{}
+</style>

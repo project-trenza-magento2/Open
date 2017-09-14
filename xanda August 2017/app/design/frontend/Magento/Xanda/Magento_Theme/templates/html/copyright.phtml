@@ -1,0 +1,30 @@
+<?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+?>
+<small class="copyright">
+    <?php echo $block->getLayout()->createBlock('Magento\Cms\Block\Block')->setBlockId('footer_area')->toHtml();?>      
+    <span><?php /* @escapeNotVerified */ echo $block->getCopyright() ?></span>
+</small>
+<input type="hidden" name="magento_base_url" id="magento_base_url" />
+<script>
+/*
+    require([
+    'jquery'
+    ], function ($) {
+        jQuery( document ).ready(function() {
+            jQuery( document ).ajaxComplete(function() {
+                jQuery("select.select").wrap("<div class='select-wrap'></div>");
+            });
+        });
+    });
+
+*/
+ require([
+    'jquery'
+    ], function ($) {
+        jQuery('#magento_base_url').val('<?php echo $this->getUrl('') ?>');
+    });
+</script>

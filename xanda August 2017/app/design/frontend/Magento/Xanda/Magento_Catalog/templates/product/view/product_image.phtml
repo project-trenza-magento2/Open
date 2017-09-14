@@ -1,0 +1,14 @@
+<?php 
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$product = $objectManager->create('Magento\Catalog\Model\Product')->load($block->getProduct()->getId());
+ //echo $product->getThumbnail();
+$imagewidth=419;
+$imageheight=425;
+$imageHelper  = $objectManager->get('\Magento\Catalog\Helper\Image');
+$image_url = $imageHelper->init($product, 'product_page_image_small')->setImageFile($product->getFile())->keepTransparency(true)->resize($imagewidth)->getUrl();
+ //echo $image_url
+//echo  $product->getProductUrl(); 
+?>
+<div class="product-image">
+    <img src="<?php echo $image_url;?>" />
+</div>

@@ -1,0 +1,79 @@
+
+
+<ol id="brandslider" class="owl-carousel owl-theme product-items">
+    <li class="product-item">
+      <div class="product-item-info">
+        <a class="product-item-photo" href="">
+            <img src="<?php echo $this->getViewFileUrl('images/brands/brand01.png'); ?>" alt=""/>
+        </a>
+      </div>
+    </li>
+    
+    <li class="product-item">
+      <div class="product-item-info">
+        <a class="product-item-photo" href="">
+            <img src="<?php echo $this->getViewFileUrl('images/brands/brand02.png'); ?>" alt=""/>
+        </a>
+      </div>
+    </li>
+    
+    <li class="product-item">
+      <div class="product-item-info">
+        <a class="product-item-photo" href="">
+            <img src="<?php echo $this->getViewFileUrl('images/brands/brand03.png'); ?>" alt=""/>
+        </a>
+      </div>
+    </li>
+    
+    <li class="product-item">
+      <div class="product-item-info">
+        <a class="product-item-photo" href="">
+            <img src="<?php echo $this->getViewFileUrl('images/brands/brand04.png'); ?>" alt=""/>
+        </a>
+      </div>
+    </li>
+    
+    <li class="product-item">
+      <div class="product-item-info">
+        <a class="product-item-photo" href="">
+            <img src="<?php echo $this->getViewFileUrl('images/brands/brand05.png'); ?>" alt=""/>
+        </a>
+      </div>
+    </li>
+    
+    <li class="product-item">
+      <div class="product-item-info">
+        <a class="product-item-photo" href="">
+            <img src="<?php echo $this->getViewFileUrl('images/brands/brand06.png'); ?>" alt=""/>
+        </a>
+      </div>
+    </li>
+
+
+</ol>
+<script>
+    require([
+    'jquery'
+    ], function ($) {
+            jQuery(document).ready(function() {
+                var owl = jQuery("#brandslider");
+              owl.owlCarousel({
+                     responsive: {
+                      0: {
+                        items: 2
+                      },
+                      600: {
+                        items: 4
+                      },
+                      1000: {
+                        items: 6
+                      }
+                    },
+                  nav:true,
+                   dots: false,
+                   margin: 20
+                 
+              });
+            });
+    });
+</script>

@@ -1,0 +1,155 @@
+
+<div class="advance-searchn"> 
+<?php
+    if(isset($_GET['concert_date'])){
+            $from = $_GET['concert_date'];
+            $date_from = $from['from'];
+            $date_to = $from['to'];
+            if($date_from==''){
+                $date_from = '';
+            }else{
+                $date_range = $date_from;
+            }
+            if($date_to ==''){
+                $date_to ='';
+            }else{
+                $date_range = $date_to;
+            }
+            
+            if($date_to !='' && $date_from!=''){
+                $date_range = $date_from.' - '.$date_to;
+            }
+            
+            //$adv_take= '06/1/2017 - 06/17/2017';
+        }else{
+            $date_from ='';
+            $date_to ='';
+            $date_range ='';
+        }
+        //echo $date_to.'=>'.$date_from.'=>'.$date_range;
+    ?>
+    
+<form id="custom-form" class="form search advanced" action="<?php echo $this->getUrl('catalogsearch/advanced/result') ?>" method="get" enctype="multipart/form-data" class="form" >
+<input type="hidden" name="concert_date[from]" id="date_from" value="<?php echo $date_from; ?>" />
+<input type="hidden" name="concert_date[to]" id="date_to" value="<?php echo $date_to; ?>" />
+    
+    <select name="chosen-select busca_por_ingresso" class="select-city" onchange="this.form.submit()"> 
+      <?php
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $attr_code = 'busca_por_ingresso';
+        $attribute = $objectManager->create('\\Magento\\Catalog\\Model\\Product\\Attribute\\Repository')->get($attr_code);
+        $options = $attribute->getOptions();
+        if($options){
+                        $select = 0;
+                        $i = 0;
+                        //echo '<option value="0" selected>Busca por ingresso</option>';
+                        foreach($options as $option){
+                        if($i !=0){    
+                    	$optionText = $option->getLabel();
+                        $optionId = $attribute->getSource()->getOptionId($optionText);
+                        if(isset($_GET[$attr_code])){
+                            if($_GET[$attr_code] == $optionId){
+                                $select = 1;
+                            }else{
+                                $select = 0;
+                            }
+                        }
+                        
+                    	if($select==1){
+                    	   echo '<option value="'.$optionId.'" selected>'.$option->getLabel().'</option>';
+                    	}else{
+                    	echo '<option value="'.$optionId.'">'.$option->getLabel().'</option>';
+                        
+                    	}
+                
+                        }
+                        $i++;
+                        }
+                        
+                    }
+        
+        
+        ?>
+    </select>
+    
+    <select class="chosen-select select-location" name="busca_por_cidade" id="busca_por_cidade" onchange="this.form.submit()">
+        <?php
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            $attr_code = 'busca_por_cidade';
+            $attribute = $objectManager->create('\\Magento\\Catalog\\Model\\Product\\Attribute\\Repository')->get($attr_code);
+            $options = $attribute->getOptions();
+            if($options){
+                $select = 0;
+                $i = 0;
+                        //echo '<option value="0" selected>Busca por cidade</option>';
+                        foreach($options as $option){
+                            if($i !=0){
+                        	$optionText = $option->getLabel();
+                            $optionId = $attribute->getSource()->getOptionId($optionText);
+                            if(isset($_GET[$attr_code])){
+                                if($_GET[$attr_code] == $optionId){
+                                    $select = 1;
+                                }else{
+                                    $select = 0;
+                                }
+                            }
+                            
+                        	if($select==1){
+                        	   echo '<option value="'.$optionId.'" selected>'.$option->getLabel().'</option>';
+                        	}else{
+                        	echo '<option value="'.$optionId.'">'.$option->getLabel().'</option>';
+                            
+                        	}  
+                            }   
+                            $i++;      
+                        }
+            }
+        ?>
+    </select>
+    
+    <div class="select-date">
+        <input id="dtpicker" name="date" type="text" placeholder="Busca por data" onchange="" value="<?php echo $date_range; ?>"/>
+    </div>
+    
+</form>
+</div>
+<script type="text/javascript">
+ require(['jquery'], function($){
+      // $('.toolbar-sorter select').selectric();
+       //$('.advance-searchn select').select2();
+      
+    
+      // $('.advance-searchn select').editableSelect({ effects: 'slide' }).on('select.editable-select', function (e, li) {
+        $('#busca_por_cidade').val(li.val());
+        $('#busca_por_cidade').hide();
+        $("#custom-form").submit();
+        
+    });
+      // $(".advance-searchn .select-location").attr("placeholder", "Busca por ingresso");
+      // $(".advance-searchn .select-city").attr("placeholder", "Busca por cidade");
+       
+  //});
+  
+  require([ 'jquery', 'jquery/ui'], function($){
+     jQuery("#dtpicker").daterange(
+        {
+            onClose: function (dateRangeText) {
+                var firstvalue = dateRangeText.split("-",1);
+                var lastvalue = dateRangeText.split(/[\s,]+/);
+               //jQuery("#dtpicker").after("<p>" + lastvalue[lastvalue.length-1] + "</p>");
+
+                jQuery("#date_from").val(firstvalue);
+                jQuery("#date_to").val(lastvalue[lastvalue.length-1]);
+                jQuery("#custom-form").submit();
+            }
+        }
+        );
+
+
+        
+    
+
+  });
+  
+</script>
+

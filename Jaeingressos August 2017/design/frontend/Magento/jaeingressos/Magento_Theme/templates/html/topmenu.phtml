@@ -1,0 +1,61 @@
+<?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * Top menu for store
+ *
+ * @var $block \Magento\Theme\Block\Html\Topmenu
+ */
+?>
+<?php
+    $sellerGroupId = $customerId = $customerGroupId = $status = '';
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $customerSession = $objectManager->get('Magento\Customer\Model\Session');
+    $objectModelManager = \Magento\Framework\App\ObjectManager::getInstance ();
+    $customerId = $block->getRequest ()->getParam ( 'id' );
+    $sellerDatas = $objectModelManager->get ( 'Apptha\Marketplace\Model\Seller' );
+    $sellerDetails = $sellerDatas->load ( $customerId, 'customer_id' );
+    $logoName = $sellerDetails->getLogoName ();
+    $logoImage = $objectModelManager->get ( 'Magento\Store\Model\StoreManagerInterface' )->getStore ()->getBaseUrl ( \Magento\Framework\UrlInterface::URL_TYPE_MEDIA ) . 'Marketplace/Seller/Resized';
+    
+    $objectGroupManager = \Magento\Framework\App\ObjectManager::getInstance ();
+    $customerDatas = $customerSession->getCustomer ();
+    if ($customerSession->isLoggedIn ()) {
+     $customerId = $customerSession->getId ();
+     $customerGroupId = $customerDatas->getGroupId ();
+     $customerGroupSession = $objectGroupManager->get ( 'Magento\Customer\Model\Group' );
+     $customerGroupData = $customerGroupSession->load ( $customerGroupId );
+     $sellerGroupCode = $customerGroupData->getCode ();
+     $sellerGroupData = $customerGroupSession->load ( 'Marketplace Seller', 'customer_group_code' );
+     $sellerGroupId = $sellerGroupData->getId ();
+     $customerGroupSession = $objectGroupManager->get ( 'Apptha\Marketplace\Model\Seller' );
+     $status = $customerGroupSession->load ( $customerId, 'customer_id' )->getStatus ();
+}
+?>
+
+<?php $columnsLimit = $block->getColumnsLimit() ?: 0; ?>
+<?php $_menu = $block->getHtml('level-top', 'submenu', $columnsLimit) ?>
+
+<nav class="navigation" data-action="navigation">
+    <ul data-mage-init='{"menu":{"responsive":true, "expanded":true, "position":{"my":"left top","at":"left bottom"}}}'>
+        <?php /* @escapeNotVerified */ echo $_menu; ?>
+        <?php /* @escapeNotVerified */ echo $block->getChildHtml(); ?>
+    </ul>
+    
+    <div class="mobile-product-add" style="display: none;">
+          <?php   if ($customerGroupId != $sellerGroupId || $status == 0) { ?>
+    <a href="<?php echo $block->getUrl('marketplace/general/changebuyer') ?>"><?php echo __('Become a Seller'); ?></a>
+
+    <?php } else if($customerGroupId != $sellerGroupId || $status == 1){?> 
+    <a href="<?php echo $this->getUrl() ?>marketplace/product/add" style=""><?php echo __('Become a Seller'); ?></a>
+    <?php } ?>
+    </div>
+    
+</nav>

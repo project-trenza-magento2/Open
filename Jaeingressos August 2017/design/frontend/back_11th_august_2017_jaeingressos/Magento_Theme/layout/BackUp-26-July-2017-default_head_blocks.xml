@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+		
+		<css src="css/jaeingressos.css" after="-" />
+		<css src="css/jaeingressos2.css" after="-" />
+		<css src="css/jaeingressos3.css" after="-" />
+		
+		<!--<css src="css/owl.carousel.min.css" after="-" />-->
+		<!--<css src="css/selectric.css" after="-" />-->
+		<!--<css src="css/jquery-editable-select.css" after="-" />
+		<link src="js/jquery-editable-select.js"/>-->
+		<link src="js/jquery.daterange.js" after="-" />
+		<!--<link src="js/jquery.selectric.js" after="-" />-->
+		
+		<!-- <css src="css/docsupport/style.css" after="-" /> -->
+		<css src="css/chosen.css" after="-" />
+		
+		<link src="js/chosen.jquery.js" after="-" />
+		<link src="js/init.js" after="-" />
+		<link src="js/jquery.bpopup.min.js" after="-" />
+		
+    </head>
+</page>

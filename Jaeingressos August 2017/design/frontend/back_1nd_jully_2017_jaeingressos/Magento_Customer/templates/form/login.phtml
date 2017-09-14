@@ -1,0 +1,80 @@
+<?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Magento\Customer\Block\Form\Login $block */
+?>
+<?php
+/**
+ * Customer login form template
+ *
+ * @see \Magento\Customer\Block\Form\Login
+ * @var $block \Magento\Customer\Block\Form\Login
+ */
+?>
+<div class="login-wrap">
+<div class="social-login">
+    <div class="block">
+        <div class="block-title"> <strong>Login with social networks</strong></div>
+    </div>
+
+    <ul>
+        <li class="sl_clearfix" id="login"><div onclick="fblogin();" class="social_login_particular_button" title="Facebook" id="facebook_login">
+            <span class="f_icon_left icon_left_grid"></span> <input type="hidden" id="facebook-seller" name="facebook-seller">
+            <button name="send" class="fb_login inner_social_grid" type="button">Facebook</button>
+            <span class="f_icon_right icon_right_grid"></span> <img src="http://jaeingressos.magemojo.io/static/version1497957009/frontend/Magento/jaeingressos/en_US/Apptha_Sociallogin/css/images/ajax-loader.gif" style="display: none" id="progress_image_facebooklogin">
+        </div>
+        </li>
+        <li class="sl_clearfix"><div title="Google+" class="social_login_particular_button" onclick="googlepost();">
+            <span class="gplus_icon_left icon_left_grid"></span>
+            <input type="hidden" id="google-seller" name="google-seller">
+            <button name="send" class="google_login inner_social_grid" type="submit">Google+</button>
+            <span class="gplus_icon_right icon_right_grid"></span>
+        </div>
+        </li>
+    </ul>
+</div>
+
+<div class="block block-customer-login">
+    <div class="block-title">
+        <strong id="block-customer-login-heading" role="heading" aria-level="2"><?php /* @escapeNotVerified */ echo __('Login with email') ?></strong>
+    </div>
+    <div class="block-content" aria-labelledby="block-customer-login-heading">
+        <form class="form form-login"
+              action="<?php /* @escapeNotVerified */ echo $block->getPostActionUrl() ?>"
+              method="post"
+              id="login-form"
+              data-mage-init='{"validation":{}}'>
+            <?php echo $block->getBlockHtml('formkey'); ?>
+            <fieldset class="fieldset login" data-hasrequired="<?php /* @escapeNotVerified */ echo __('* Required Fields') ?>">
+                <!--<div class="field note"><?php /* @escapeNotVerified */ echo __('If you have an account, sign in with your email address.') ?></div>-->
+                <div class="field email required">
+                    <!--<label class="label" for="email"><span><?php /* @escapeNotVerified */ echo __('Email') ?></span></label>-->
+                    <div class="control">
+                        <input name="login[username]" value="<?php echo $block->escapeHtml($block->getUsername()) ?>" <?php if ($block->isAutocompleteDisabled()) :?> autocomplete="off"<?php endif; ?> id="email" type="email" class="input-text" placeholder="<?php /* @escapeNotVerified */ echo __('email') ?>" title="<?php /* @escapeNotVerified */ echo __('Email') ?>" data-validate="{required:true, 'validate-email':true}">
+                    </div>
+                </div>
+                <div class="field password required">
+                    <!--<label for="pass" class="label"><span><?php /* @escapeNotVerified */ echo __('Password') ?></span></label>-->
+                    <div class="control">
+                        <input name="login[password]" type="password" <?php if ($block->isAutocompleteDisabled()) :?> autocomplete="off"<?php endif; ?> class="input-text" id="pass" placeholder="<?php /* @escapeNotVerified */ echo __('password') ?>" title="<?php /* @escapeNotVerified */ echo __('Password') ?>" data-validate="{required:true}">
+                    </div>
+                </div>
+                <?php echo $block->getChildHtml('form_additional_info'); ?>
+                <div class="actions-toolbar">
+                    <div class="clear-fix">
+                        <div class="keep-login"><input type="checkbox" id="keep_login" name="keep_login" /><label for="keep_login">Keep logged in</label> </div>
+                        <div class="secondary"><a class="action remind" href="<?php /* @escapeNotVerified */ echo $block->getForgotPasswordUrl() ?>"><span><?php /* @escapeNotVerified */ echo __('Forgot Your Password?') ?></span></a></div>
+                    </div>
+                    <div class="primary"><button type="submit" class="action login primary" name="send" id="send2"><span><?php /* @escapeNotVerified */ echo __('Sign In') ?></span></button></div>
+                    
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+</div>

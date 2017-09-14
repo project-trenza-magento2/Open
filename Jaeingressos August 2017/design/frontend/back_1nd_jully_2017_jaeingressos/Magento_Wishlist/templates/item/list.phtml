@@ -1,0 +1,70 @@
+<?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/** @var \Magento\Wishlist\Block\Customer\Wishlist\Items $block */
+$columns = $block->getColumns();
+?>
+
+<div class="products-grid wishlist">
+    <?php $iterator = 1; ?>
+    <?php if (count($block->getItems())): ?>
+    <ol class="product-items">
+        <?php foreach ($block->getItems() as $item): ?>
+
+        <?php /* @escapeNotVerified */ echo($iterator++ == 1) ? '<li data-row="product-item" class="product-item" id="item_' . $item->getId() . '">' : '</li><li class="product-item" id="item_' . $item->getId() . '">' ?>
+            <div class="author-info">
+            <?php //echo $item->getId();?>
+                             <?php 
+                                 $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                                 $product = $objectManager->create('Magento\Catalog\Model\Product')->load($item->getId());
+                                 $objectManager = \Magento\Framework\App\ObjectManager::getInstance ();
+                                 $seller_id = $product->getSellerId();
+                                 $imageBlock =  $block->getLayout()->createBlock('Apptha\Marketplace\Block\Seller\Profile');
+                                 $sellerProfileDetails = $imageBlock->getSellerProfilebyid ($seller_id);
+                                 $sellerDetails = $sellerProfileDetails ['seller_details'];
+                                 $countryDatas = $sellerProfileDetails ['country_list'];
+                                 $logoImage = $sellerProfileDetails ['logo_image'];
+                                 $bannerImage = $sellerProfileDetails ['banner_image'];
+                                 $objectModelManager = \Magento\Framework\App\ObjectManager::getInstance ();
+                                 /* Profile Photo Block */
+                                $avatar = $block->getLayout()->createBlock('SY\Avatar\Block\Customer\Account\Avatar');
+                            ?>
+                             <?php if($sellerDetails->getLogoName()!=''){?>
+                                <img src="<?php echo $logoImage.$sellerDetails->getLogoName(); ?>" style="border-radius: 50%;height: 22px;width: 21px;"/>
+                                <?php }else{?>
+                            	<img src="<?php echo $avatar->getAvatar(); ?>" style="border-radius: 50%;border-radius: 50%;height: 22px;width: 21px;">
+                             <?php } ?>
+                                <h4>
+                                <a href="<?php echo $this->getUrl(str_replace(' ', '-', $sellerDetails->getStoreName())) ;?>">
+                                <?php 
+                                    $getStoreName = explode(' ',trim($sellerDetails->getStoreName()));
+                                    echo $getStoreName[0];
+                                ?></a>
+
+                                </h4>
+                            </div>
+            <div class="product-item-info">
+                <?php foreach ($columns as $column): ?>
+                    <?php $column->setItem($item); echo $column->toHtml($item);?>
+                <?php endforeach; ?>
+            </div>
+        <?php echo($iterator == count($block->getItems())+1) ? '</li>' : '' ?>
+        <?php endforeach; ?>
+    </ol>
+    <?php else: ?>
+        <div class="message info empty">
+            <span><?php /* @escapeNotVerified */ echo __('This Wish List has no Items');?></span>
+        </div>
+    <?php endif; ?>
+</div>
+
+<?php foreach ($columns as $column): ?>
+    <?php echo $column->getAdditionalHtml();?>
+<?php endforeach; ?>

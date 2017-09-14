@@ -1,0 +1,136 @@
+<div class="product-information">
+<?php
+    $product_id = $block->getProduct()->getId();
+    
+?>
+
+    <?php $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$product = $objectManager->create('Magento\Catalog\Model\Product')->load($block->getProduct()->getId());
+ //echo $product->getThumbnail();
+$imagewidth=200;
+$imageheight=200;
+$imageHelper  = $objectManager->get('\Magento\Catalog\Helper\Image');
+$image_url = $imageHelper->init($product, 'product_page_image_small')->setImageFile($product->getFile())->resize($imagewidth, $imageheight)->getUrl();
+ //echo $image_url
+//echo  $product->getProductUrl(); 
+?>
+    <div class="product-image">
+        <img src="<?php echo $image_url;?>" />
+    </div>
+    <div class="product-information-details">
+        <h3 class="product-title"><?php  echo $block->getProduct()->getName(); ?></h3>
+        <table border="0" style="max-width: 320px;">
+            <tr>
+                <td> <span><?php echo __('Date');?></span></td>
+                <td><h5><?php  
+                $date = $block->getProduct()->getData('concert_date');
+                echo $newDate = date("d/m/Y", strtotime($date));
+                ?>
+                </h5></td>
+            </tr>
+            
+            <tr>
+                <td> <span><?php echo __('Category');?></span></td>
+                <td>
+                <h5>
+                    <?php
+                        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+                        $product_att = $objectManager->get('Magento\Framework\Registry')->registry('current_product');
+                        $categories = $product_att->getCategoryIds(); /*will return category ids array*/
+                        foreach($categories as $category){
+                            $cat = $objectManager->create('Magento\Catalog\Model\Category')->load($category);
+                            echo strtolower($cat->getName());
+                            }
+                    ?>
+                </h5>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><span><?php echo __('Hour');?></span></td>
+                <td><h5>
+                    <?php  
+                        $date = $block->getProduct()->getData('concert_date');
+                        echo $newDate = date("h:m", strtotime($date));
+                     ?>
+                </h5></td>
+            </tr>
+            
+            <tr>
+                <td><span><?php echo __('Sex');?></span></td>
+                <td><h5>
+         
+            <?php  
+                $sex = $block->getProduct()->getData('sex');
+                $attr = $product->getResource()->getAttribute('sex');
+                 if ($attr->usesSource()) {
+                       echo $optionText = $attr->getSource()->getOptionText($sex);
+                 }
+                 
+             ?>
+        </h5></td>
+            </tr>
+            
+            <tr>
+                <td style="padding: 20px 0px !important;"><span><?php echo __('Qty');?></span></td>
+                <td style="padding: 20px 0px !important;">  <div class="field qty" style="    width: 44px;" >
+         
+            <!--<label class="label" for="qty"><span><?php /* @escapeNotVerified */ echo __('Qty') ?></span></label>-->
+            <div class="control">
+                <input type="number"
+                       name="qty"
+                       id="qty"
+                       maxlength="12"
+                       value="<?php /* @escapeNotVerified */ echo $block->getProductDefaultQty() * 1 ?>"
+                       title="<?php /* @escapeNotVerified */ echo __('Qty') ?>" class="input-text qty"
+                       data-validate="<?php echo $block->escapeHtml(json_encode($block->getQuantityValidators())) ?>"
+                       />
+            </div>
+        </div></td>
+            </tr>
+            
+            <tr>
+                <td> <span><?php echo __('Sold by');?></span></td>
+                <td><div class="field soldby" style="    width: 100%;">
+           
+            
+            <?php 
+                 $objectManager = \Magento\Framework\App\ObjectManager::getInstance ();
+                 $seller_id = $product->getSellerId();
+                 $imageBlock =  $block->getLayout()->createBlock('Apptha\Marketplace\Block\Seller\Profile');
+                 $sellerProfileDetails = $imageBlock->getSellerProfilebyid ($seller_id);
+                 $sellerDetails = $sellerProfileDetails ['seller_details'];
+                 $countryDatas = $sellerProfileDetails ['country_list'];
+                 $logoImage = $sellerProfileDetails ['logo_image'];
+                 $bannerImage = $sellerProfileDetails ['banner_image'];
+                 $objectModelManager = \Magento\Framework\App\ObjectManager::getInstance ();
+                 /* Profile Photo Block */
+                $avatar = $block->getLayout()->createBlock('SY\Avatar\Block\Customer\Account\Avatar');
+            ?>
+             <?php if($sellerDetails->getLogoName()!=''){?>
+                <img src="<?php echo $logoImage.$sellerDetails->getLogoName(); ?>" style="    border-radius: 50%;height: 24px;width: 25px;float: left;margin-top: 8px;margin-right: 6px;margin-left: -40px;"/>
+                <?php }else{?>
+            	<img src="<?php echo $avatar->getAvatar(); ?>" style="border-radius: 50%;height: 24px;width: 25px;float: left;margin-top: 8px;margin-right: 6px;margin-left: -40px;">
+             <?php } ?>
+                <a class="user-title" href="<?php echo $this->getUrl(str_replace(' ', '-', $sellerDetails->getStoreName())) ;?>"><?php 
+                    $getStoreName = explode(' ',trim($sellerDetails->getStoreName()));
+                    echo $getStoreName[0];
+                ?></a>
+                
+         </div></td>
+            </tr>
+        </table>
+        
+        
+        
+        
+        
+        
+        
+       
+         
+         
+    </div>
+    
+
+</div>

@@ -1,0 +1,101 @@
+
+
+<div class="advance-searchn"> 
+
+<form id="custom-form" class="form search advanced" action="<?php echo $this->getUrl('catalogsearch/advanced/result') ?>" method="get" enctype="multipart/form-data" class="form" >
+<input type="hidden" name="form_key" value="<?php echo $this->getFormKey(); ?>" />
+    <select class="select-location" name="busca_por_cidade" onchange="this.form.submit()">
+        <?php
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            $attr_code = 'busca_por_cidade';
+            $attribute = $objectManager->create('\\Magento\\Catalog\\Model\\Product\\Attribute\\Repository')->get($attr_code);
+            $options = $attribute->getOptions();
+            if($options){
+                $select = 0;
+                        foreach($options as $option){
+                    	$optionText = $option->getLabel();
+                        $optionId = $attribute->getSource()->getOptionId($optionText);
+                        if(isset($_GET[$attr_code])){
+                            if($_GET[$attr_code] == $optionId){
+                                $select = 1;
+                            }else{
+                                $select = 0;
+                            }
+                        }
+                        
+                    	if($select==1){
+                    	   echo '<option value="'.$optionId.'" selected>'.$option->getLabel().'</option>';
+                    	}else{
+                    	echo '<option value="'.$optionId.'">'.$option->getLabel().'</option>';
+                        
+                    	}           
+                }
+            }
+        ?>
+    </select>
+    <select name="busca_por_ingresso" class="select-city" onchange="this.form.submit()"> 
+      <?php
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+        $attr_code = 'busca_por_ingresso';
+        $attribute = $objectManager->create('\\Magento\\Catalog\\Model\\Product\\Attribute\\Repository')->get($attr_code);
+        $options = $attribute->getOptions();
+        if($options){
+                        $select = 0;
+                        foreach($options as $option){
+                    	$optionText = $option->getLabel();
+                        $optionId = $attribute->getSource()->getOptionId($optionText);
+                        if(isset($_GET[$attr_code])){
+                            if($_GET[$attr_code] == $optionId){
+                                $select = 1;
+                            }else{
+                                $select = 0;
+                            }
+                        }
+                        
+                    	if($select==1){
+                    	   echo '<option value="'.$optionId.'" selected>'.$option->getLabel().'</option>';
+                    	}else{
+                    	echo '<option value="'.$optionId.'">'.$option->getLabel().'</option>';
+                        
+                    	}
+                
+                        }
+                    }
+        
+        ?>
+    </select>
+    <div class="select-date">
+        <input id="d" name="date" type="text"/>
+    </div>
+    
+</form>
+</div>
+<script type="text/x-magento-init">
+ require([
+   "jquery"
+   ], function($){
+   $(document).ready(function() {
+ $('.advance-searchn select, .advance-search select').selectric();
+
+ });
+ });
+</script>
+<script>
+var form = document.getElementById("custom-form");
+
+document.getElementById("your-id").addEventListener("click", function () {
+  form.submit();
+});
+        jQuery(function () {
+            jQuery("#d").daterange({
+                onClose: function (dateRangeText) {
+                    jQuery("#d").after("<p>" + dateRangeText + "</p>");
+                }
+            });
+        });
+</script>
+
+<style>
+.advance-search{display:block}
+.advance-search select,.advance-search input{width: 18%;}
+</style>

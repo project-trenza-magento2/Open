@@ -1,0 +1,71 @@
+<?php
+$sellerGroupId = $customerId = $customerGroupId = $status = '';
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$customerSession = $objectManager->get('Magento\Customer\Model\Session');
+$objectModelManager = \Magento\Framework\App\ObjectManager::getInstance ();
+$customerId = $block->getRequest ()->getParam ( 'id' );
+$sellerDatas = $objectModelManager->get ( 'Apptha\Marketplace\Model\Seller' );
+$sellerDetails = $sellerDatas->load ( $customerId, 'customer_id' );
+$logoName = $sellerDetails->getLogoName ();
+$logoImage = $objectModelManager->get ( 'Magento\Store\Model\StoreManagerInterface' )->getStore ()->getBaseUrl ( \Magento\Framework\UrlInterface::URL_TYPE_MEDIA ) . 'Marketplace/Seller/Resized';
+
+$objectGroupManager = \Magento\Framework\App\ObjectManager::getInstance ();
+$customerDatas = $customerSession->getCustomer ();
+if ($customerSession->isLoggedIn ()) {
+ $customerId = $customerSession->getId ();
+ $customerGroupId = $customerDatas->getGroupId ();
+ $customerGroupSession = $objectGroupManager->get ( 'Magento\Customer\Model\Group' );
+ $customerGroupData = $customerGroupSession->load ( $customerGroupId );
+ $sellerGroupCode = $customerGroupData->getCode ();
+ $sellerGroupData = $customerGroupSession->load ( 'Marketplace Seller', 'customer_group_code' );
+ $sellerGroupId = $sellerGroupData->getId ();
+ $customerGroupSession = $objectGroupManager->get ( 'Apptha\Marketplace\Model\Seller' );
+ $status = $customerGroupSession->load ( $customerId, 'customer_id' )->getStatus ();
+}
+
+/* Profile Photo Block */
+$avatar = $block->getLayout()->createBlock('SY\Avatar\Block\Customer\Account\Avatar');
+?>
+<ul>
+    <?php if($customerSession->isLoggedIn()) { ?>
+    <li class="icon-cart"><a href="<?php echo $this->getUrl() ?>/cart">Cart</a></li>
+    <li class="icon-mail"><a href="/email">Email<span>3</span></a></li>
+    <li class="user-profile-icon"><a href="#"><?php if($logoName!=""){?>
+           <img src="<?php echo $logoImage.$logoName;?>" alt="store logo" class="market_place_store_img_logo" />
+           <?php } else{?>
+          <!--  <img src="<?php echo $block->getViewFileUrl('Apptha_Marketplace::images/no-store-logo.png');?>" />-->
+            	<img src="<?php echo $avatar->getAvatar(); ?>">
+      <?php  }?></a>
+      
+      <div class="user-acoount-wrapper">
+        <ul class="user-acoount">
+        <?php   if ($customerGroupId != $sellerGroupId || $status == 0) { ?>
+            <li class="my-profile"><a href="<?php echo $this->getUrl() ?>customer/account"><?php echo __('My profile'); ?></a></li>
+            <li class="my-favorite"><a href="<?php echo $this->getUrl() ?>wishlist"><?php echo __('Favorite'); ?></a></li>
+            <li class="my-configuration"><a href="<?php echo $this->getUrl() ?>customer/account/edit"><?php echo __('Configuration'); ?></a></li>
+            <li class="my-logout"><a href="<?php echo $this->getUrl() ?>customer/account/logout"><?php echo __('Logout'); ?></a></li>
+         <?php } else if ($customerGroupId != $sellerGroupId || $status == 1) { ?>
+         <li class="my-profile"><a href="<?php echo $this->getUrl() ?>customer/account"><?php echo __('My profile'); ?></a></li>
+            <li class="my-sales"><a href="<?php echo $this->getUrl() ?>marketplace/product/manage"><?php echo __('My sales'); ?></a></li>
+            <li class="my-wallet"><a href="<?php echo $this->getUrl() ?>"><?php echo __('My wallet'); ?></a></li>
+            <li class="my-favorite"><a href="<?php echo $this->getUrl() ?>wishlist"><?php echo __('Favorite'); ?></a></li>
+            <li class="my-configuration"><a href="<?php echo $block->getUrl('marketplace/seller/profile') ?>"><?php echo __('Configuration'); ?></a></li>
+            <li class="my-configuration" style="display: none;"><a href="<?php echo $this->getUrl() ?>customer/account/edit"><?php echo __('Configuration'); ?></a></li>
+            <li class="my-logout"><a href="<?php echo $this->getUrl() ?>customer/account/logout"><?php echo __('Logout'); ?></a></li>
+         
+         <?php } ?>
+        </ul>
+      </div>
+      </li>
+    
+    <?php }else{ ?>
+    <li class="user-login-icon"><a href="<?php echo $this->getUrl() ?>customer/account/login">entrar</a></li>
+    <?php } ?>
+        
+    <?php   if ($customerGroupId != $sellerGroupId || $status == 0) { ?>
+    <li><a href="<?php echo $block->getUrl('marketplace/general/changebuyer') ?>"><?php echo __('Become a Seller'); ?></a></li>
+
+    <?php } else if($customerGroupId != $sellerGroupId || $status == 1){?> 
+    <li><a href="<?php echo $this->getUrl() ?>/marketplace/product/add/" style=""><?php echo __('Become a Seller'); ?></a></li>
+    <?php } ?>
+</ul>

@@ -1,0 +1,76 @@
+<?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+/** @var $block \Magento\Framework\View\Element\Html\Links */
+?>
+<?php /** @var $block \Magento\Customer\Block\Account\Navigation */ 
+    $urlInterface = \Magento\Framework\App\ObjectManager::getInstance ()->get ( 'Magento\Framework\UrlInterface' );
+    $currentUrl = $urlInterface->getCurrentUrl ();
+    $sellerGroupId = $customerId = $customerGroupId = $status = '';
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $customerSession = $objectManager->get('Magento\Customer\Model\Session');
+    $objectModelManager = \Magento\Framework\App\ObjectManager::getInstance ();
+    $customerId = $block->getRequest ()->getParam ( 'id' );
+    $sellerDatas = $objectModelManager->get ( 'Apptha\Marketplace\Model\Seller' );
+    $sellerDetails = $sellerDatas->load ( $customerId, 'customer_id' );
+    $logoName = $sellerDetails->getLogoName ();
+    $logoImage = $objectModelManager->get ( 'Magento\Store\Model\StoreManagerInterface' )->getStore ()->getBaseUrl ( \Magento\Framework\UrlInterface::URL_TYPE_MEDIA ) . 'Marketplace/Seller/Resized';
+    
+    $objectGroupManager = \Magento\Framework\App\ObjectManager::getInstance ();
+    $customerDatas = $customerSession->getCustomer ();
+    if ($customerSession->isLoggedIn ()) {
+     $customerId = $customerSession->getId ();
+     $customerGroupId = $customerDatas->getGroupId ();
+     $customerGroupSession = $objectGroupManager->get ( 'Magento\Customer\Model\Group' );
+     $customerGroupData = $customerGroupSession->load ( $customerGroupId );
+     $sellerGroupCode = $customerGroupData->getCode ();
+     $sellerGroupData = $customerGroupSession->load ( 'Marketplace Seller', 'customer_group_code' );
+     $sellerGroupId = $sellerGroupData->getId ();
+     $customerGroupSession = $objectGroupManager->get ( 'Apptha\Marketplace\Model\Seller' );
+     $status = $customerGroupSession->load ( $customerId, 'customer_id' )->getStatus ();
+    }
+    
+    $trenza = $block->getLayout()->createBlock('Trenza\Message\Block\Message');
+    $is_seller = $trenza->is_customer_seller($customerId);
+?>
+<?php 
+
+
+/* Profile Photo Block */
+$avatar = $block->getLayout()->createBlock('SY\Avatar\Block\Customer\Account\Avatar');
+?>
+<div class="block account-nav">
+    <div class="title">
+        <strong><?php /* @escapeNotVerified */ echo __('My Account'); ?></strong>
+    </div>
+    <div class="content">
+        <nav class="account-nav">
+            
+            <ul class="nav items">
+                <?php echo $block->getChildHtml();?>
+                <?php   //if ($customerGroupId != $sellerGroupId || $status == 0) { ?>
+                <?php   if ($is_seller == 'customer') { ?>
+                <div class="field_store_logos">
+                    <div class="store_logos" style="overflow: hidden;"><img src="<?php echo $avatar->getAvatar(); ?>"/></div>
+                    <?php echo $customerSession->getCustomer()->getName(); ?>
+                    <!--<div class="cust-location"><i></i> <?php echo $customerSession->getCustomer()->getDefaultBilling(); ?></div>-->
+                </div>
+                <ul class="user-profile-icon nav items">
+                    <li class="my-profile nav item  <?php if($currentUrl==$block->getUrl('').'customer/account'){?>current<?php }?>"><a href="<?php echo $this->getUrl() ?>customer/account"><?php echo __('My profile'); ?></a></li>
+                    <li class="my-order nav item  <?php if($currentUrl==$block->getUrl('sales/order/history')){?>current<?php }?>"><a href="<?php echo $block->getUrl('sales/order/history') ?>"><?php echo __('My orders'); ?></a></li>
+                    <li class="my-favorite nav item  <?php if($currentUrl==$block->getUrl('').'wishlist'){?>current<?php }?>"><a href="<?php echo $this->getUrl() ?>wishlist"><?php echo __('Favorite'); ?></a></li>
+                    <li class="my-configuration nav item  <?php if($currentUrl==$block->getUrl('').'customer/account/edit'){?>current<?php }?>"><a href="<?php echo $this->getUrl() ?>customer/account/edit"><?php echo __('Settings'); ?></a></li>
+                    <li class="my-logout nav item  v"><a href="<?php echo $this->getUrl() ?>customer/account/logout"><?php echo __('Log out'); ?></a></li>
+                </ul>
+                 <?php }?>
+                 <?php   
+                 if ($is_seller == 'seller') {  ?>
+                 
+                
+                  <?php }?>
+            </ul>
+        </nav>
+    </div>
+</div>

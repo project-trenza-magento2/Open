@@ -1,0 +1,163 @@
+<?php
+
+$showWishlist = true;
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+
+$productCollection = $objectManager->create('Magento\Catalog\Model\CategoryFactory');
+
+$trenza = $block->getLayout()->createBlock('Trenza\Message\Block\Message');
+
+
+$collection = $productCollection->create()
+            ->load(11)
+            ->getProductCollection()
+            ->addAttributeToSelect('*');
+            
+           
+?>
+
+<div class="title-wrap">
+    
+    <h3><?php /* @escapeNotVerified */ echo __('HIGHLIGHTS') ?><a class="view-more" href="<?php echo $this->getUrl('highlights.html'); ?>"><?php /* @escapeNotVerified */ echo __('View more') ?></a></h3>
+    
+    </div>
+<?php 
+    $wishlist =  $block->getLayout()->createBlock('\Magento\Wishlist\Block\Customer\Wishlist');
+    $product_view =  $block->getLayout()->createBlock('\Magento\Catalog\Block\Product\View');
+    $wishlist_status = 1;
+    if ($wishlist->hasWishlistItems()){
+    $wishlist = $wishlist->getWishlistItems();
+        foreach($wishlist as $_items){
+            $all_wishlist[]=$_items->getProductId();
+        }
+    }else{
+        $wishlist_status = 0;
+    }
+?>
+
+<ol id="hinglightproductlist" class="owl-carousel owl-theme product-items">
+<?php
+foreach ($collection as $product){
+    ?>
+    <li class="product-item">
+      <div class="product-author">
+            <div class="author-info">
+                <?php 
+                    $seller_id = $product->getSellerId();
+                    $product_id = $product->getId();
+                    $wishlist_class ='';
+                    
+                    $customerSession = $objectManager->get('Magento\Customer\Model\Session');
+                    if($customerSession->isLoggedIn() && $wishlist_status!=0) {
+                        if($wishlist && in_array($product_id, $all_wishlist)){
+                            $wishlist_class = 'wislish-active';
+                        }
+                    }
+                    
+                    
+                    $imageBlock =  $block->getLayout()->createBlock('Apptha\Marketplace\Block\Seller\Profile');
+                    
+                    $sellerProfileDetails = $imageBlock->getSellerProfilebyid ($seller_id);
+                    $sellerDetails = $sellerProfileDetails ['seller_details'];
+                    $countryDatas = $sellerProfileDetails ['country_list'];
+                    $logoImage = $sellerProfileDetails ['logo_image'];
+                    $bannerImage = $sellerProfileDetails ['banner_image'];
+                    $objectModelManager = \Magento\Framework\App\ObjectManager::getInstance ();
+                    /* Profile Photo Block */
+                    $avatar = $block->getLayout()->createBlock('SY\Avatar\Block\Customer\Account\Avatar');
+                ?>
+                  
+                    <img src="<?php echo $block->getViewFileUrl('images/user.png'); ?>" style="border-radius: 50%;height: 22px;width: 21px;"/>
+                          
+                             
+                    <h4>
+                    <a href="<?php echo $this->getUrl(str_replace(' ', '-', $sellerDetails->getStoreName())) ;?>">
+                    <?php 
+                        $getStoreName = explode(' ',trim($sellerDetails->getStoreName()));
+                        //echo $getStoreName[0];
+                        echo $seller_random_name = $trenza->random_name();
+                        //echo 'userxpto';
+                    ?></a>
+
+                    </h4>
+            </div>
+            <div class="to-wishlist">
+                      <?php if ($this->helper('Magento\Wishlist\Helper\Data')->isAllow() && $showWishlist): ?>
+                            <a href="#"
+                               data-post='<?php /* @escapeNotVerified */ echo $product_view->getAddToWishlistParams($product); ?>'
+                               class="action towishlist <?php echo $wishlist_class; ?>" data-action="add-to-wishlist"
+                               title="<?php /* @escapeNotVerified */ echo __('Add to Wish List') ?>">
+                                <span><?php /* @escapeNotVerified */ echo __('Add to Wish List') ?></span>
+                            </a>
+                      <?php endif; ?>
+            </div>
+      </div>
+      
+      <div class="product-item-info">
+        <a class="product-item-photo" href="<?php echo $product->getProductUrl() ?>">
+            <?php 
+                if($product->getImage() != ''){
+                    $productImageUrl = $block->getUrl('pub/media/catalog').'product'.$product->getImage(); 
+                }else{
+                    $productImageUrl = $block->getUrl('static/version1500438168/frontend/Magento/jaeingressos/pt_BR/Magento_Catalog/').'images/product/placeholder/small_image.jpg'; 
+                }
+                
+            ?>
+            
+            <img src="<?php echo $productImageUrl ?>" alt="<?php echo $product->getName() ?>"/>
+        </a>
+        <div class="product-item-details">
+            <strong class="product-item-name"><a class="product-item-link" href="<?php echo $product->getProductUrl() ?>"><?php echo $product->getName() ?></a></strong>
+            <?php
+                $abstractProductBlock = $block->getLayout()->createBlock('\Magento\Catalog\Block\Product\AbstractProduct');
+                echo $abstractProductBlock->getProductPrice($product);
+            ?>
+        </div>
+      </div>
+    </li>
+    <?php
+}  
+?>
+</ol>
+<script>
+    require([
+    'jquery'
+    ], function ($) {
+            jQuery(document).ready(function() {
+                var owl = jQuery("#hinglightproductlist");
+              owl.owlCarousel({
+                     responsive: {
+                      0: {
+                        items: 1
+                      },
+                      600: {
+                        items: 2
+                      },
+                      1000: {
+                        items: 4
+                      }
+                    },
+                  nav:true,
+                   dots: false,
+                   margin: 20
+                 
+              });
+            });
+    });
+</script>
+<script type="text/x-magento-init">
+{
+    "*": {
+        "Magento_Ui/js/core/app": {
+            "components": {
+                "wishlist": {
+                    "component": "Magento_Wishlist/js/view/wishlist"
+                }
+            }
+        }
+    }
+}
+
+
+
+</script>

@@ -1,0 +1,24 @@
+<!--@subject Order Item {{var requesttype}} Request @-->
+{{template config_path="design/email/header_template"}}
+<table>
+	<tr>
+		<td valign="top">
+			<p style="font-size: 12px; line-height: 16px; margin: 0 0 16px 0;">
+				Oi {{var receivername}},<br />
+				<br /> Favor checar a ordem {{var requesttype}} enviada pelo {{var requestperson}}.<br />
+				<br /> {{var requestperson}} Name: {{var requestperson_name}} <br />
+				Email: {{var requestperson_email}}<br /> Ordem: #{{var
+				increment_id}}
+
+			</p> <b>Produto(s) na ordem : </b><br /> {{layout
+			handle="marketplace_order_items_request" order_id=$order_id
+			product_id=$product_id seller_id=$seller_id area="frontend"}} {{if
+			reason}}
+			<p>
+				<b>Razão :</b> {{var reason}}
+			</p> {{/if}} {{if requesturl}} para {{var requesttype}} item pedido <a
+			href="{{var requesturl}}">click here</a> {{/if}}
+		</td>
+	</tr>
+</table>
+{{template config_path="design/email/footer_template"}}

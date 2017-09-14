@@ -1,0 +1,23 @@
+div#minicart-content-wrapper span {
+    color: #000000;
+}
+
+button#top-cart-btn-checkout span {
+    color: #fff;
+}
+
+ol#mini-cart label {
+    color: #000000;
+}
+
+.minicart-items .item-qty {
+    color: black;
+}
+
+.action.primary:hover {
+    background: #ad2724
+}
+
+.action.primary{
+    background: #ad2724!important
+}

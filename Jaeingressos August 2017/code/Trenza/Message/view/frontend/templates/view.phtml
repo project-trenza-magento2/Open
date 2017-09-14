@@ -1,0 +1,247 @@
+<?php
+    $_message_details = $this->view_message_data();
+    
+    $_objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $_userObj = $_objectManager->create('Magento\Customer\Model\Customer');
+
+    $_customerSession = $_objectManager->get('Magento\Customer\Model\Session');
+    $customerDatas = $_customerSession->getCustomer();
+    
+    $request = $_objectManager->get('Magento\Framework\App\Request\Http');
+    $urlInterface = $_objectManager->get('Magento\Framework\UrlInterface');
+    
+    
+    
+    
+    
+    if ($_customerSession->isLoggedIn())
+    {
+        $customerId = $_customerSession->getId ();
+        if($_message_details->getReceiverId() != $customerId){
+            $url = $urlInterface->getUrl('message');
+            if(strpos($request->getPathInfo(),'message')!== 0)
+            {
+                # redirect to /customer/account/login    
+                header('Location:'.$url );die();
+            }
+        }
+    } 
+    else
+    {
+        
+        $url = $urlInterface->getUrl('customer/account/login');
+        if(strpos($request->getPathInfo(),'/customer/account/')!== 0)
+        {
+            # redirect to /customer/account/login    
+            header('Location:'.$url );die();
+        }  
+    }   
+?>
+
+<?php
+    $_sub_messages = $this->view_sub_message_data($_message_details->getId());
+?>
+<?php
+$_message_details->getReceiverDeleteFlg();
+if ($_message_details->getReceiverDeleteFlg() == 1){
+        $url = $urlInterface->getUrl('message');
+        if(strpos($request->getPathInfo(),'message')!== 0)
+        {
+            # redirect to /customer/account/login    
+            header('Location:'.$url );die();
+        }
+} 
+  
+?>
+
+<?php if($_sub_messages->getSize()): ?>
+ <!--    Conversation goes here... -->
+
+    
+         <form class="message-inbox" id="messagedelete" method="POST">
+         <div class="message-inbox-head">
+            <ul>
+                <li>
+                     <div class="message-inbox-checkbox allselect">
+                        <input type="checkbox" id="allselect" name="alldelete" /> 
+                        <label for="allselect"></label>
+                        
+                    </div>
+                    <label class="message-header-title" for="allselect"><?php echo __('Sleect all'); ?></label>
+                </li>
+                
+                <li>
+                    <input name="delete" type="hidden" value="x" />
+                    <a href="javascript:void(0);" class="action-delete message-header-title" onclick="ajaxmessage('popup','messagedelete','<?php  echo $this->getUrl('message/index/delete'); ?>'); return false;"><?php echo __('Delete'); ?></a>
+                </li>
+            </ul>
+           
+            
+        </div>
+        <input class="selectmessage" name="checkbox[]" type="checkbox" id="check-hidden" value="<?php echo $this->getRequest()->getParam('id'); ?>" style="display: none;" />
+        </form>
+
+            <div class="message-inbox-body" style="width: 100%;">
+
+                 <div class="message-inbox-checkbox submessage">
+                    <input class="selectmessage" name="checkbox[]" type="checkbox" id="check" value="<?php echo $this->getRequest()->getParam('id'); ?>" />
+                    <label for="check"></label>
+                </div>
+
+                <ul class="submessage">
+                 <?php  
+                    if($this->is_seller($_message_details->getSenderId()) == 'seller'){
+                        $imageBlock =  $block->getLayout()->createBlock('Apptha\Marketplace\Block\Seller\Profile');
+                        $sellerProfileDetails = $imageBlock->getSellerProfilebyid ($_message_details->getSenderId());
+                        $sellerDetails = $sellerProfileDetails ['seller_details'];
+                        $countryDatas = $sellerProfileDetails ['country_list'];
+                        $logoImage = $sellerProfileDetails ['logo_image'];
+                        $bannerImage = $sellerProfileDetails ['banner_image'];
+                        $sender_name = $sellerDetails->getStoreName();
+                    }else{
+                        $customerObj = $objectManager->create('Magento\Customer\Model\Customer')->load($_message_details->getSenderId()); 
+                        $sender_name = $customerObj->getFirstname();
+                    }
+                ?>
+                 <li style="margin-left: -36px;">
+                    <div class="message submeessage">
+                    <div class="message submeessage">
+                         <div class="text-left full-width message-inbox" >
+                            <h3><a href="#"><?php echo $sender_name; ?></a></h3>
+                            <h5><?php echo $_message_details->getMessage(); ?></h5>
+                        </div>   
+                    </div>
+                </li>
+                <?php foreach($_sub_messages as $_sub_message): ?>      
+                <?php  
+                    if($this->is_seller($_sub_message->getSenderId()) == 'seller'){
+                        $imageBlock =  $block->getLayout()->createBlock('Apptha\Marketplace\Block\Seller\Profile');
+                        $sellerProfileDetails = $imageBlock->getSellerProfilebyid ($_sub_message->getSenderId());
+                        $sellerDetails = $sellerProfileDetails ['seller_details'];
+                        $countryDatas = $sellerProfileDetails ['country_list'];
+                        $logoImage = $sellerProfileDetails ['logo_image'];
+                        $bannerImage = $sellerProfileDetails ['banner_image'];
+                        $sender_name = $sellerDetails->getStoreName();
+                    }else{
+                        $customerObj = $objectManager->create('Magento\Customer\Model\Customer')->load($_sub_message->getSenderId()); 
+                        $sender_name = $customerObj->getFirstname();
+                    }
+                ?>
+                
+                <li>
+                    <div class="message submeessage">
+                         <div class="text-left full-width message-inbox" >
+                            <h3 class="<?php if($_sub_message->getSenderId() == $customerId || $_sub_message->getSenderId() == $customerId ){echo 'text-aligh-right'; } ?>"><a href="#"><?php echo $sender_name; ?></a></h3>
+                            <h5><?php echo $_sub_message->getMessage(); ?></h5>
+                        </div>   
+                    </div>
+                </li>
+                    
+            <?php endforeach; ?>
+            <li>
+                
+                <div class="send-message">
+                    <h3 class="product-title"><?php echo __('Send a message');?></h3>
+                    <form id="messagesend" action="<?php echo $this->getUrl('message/index/send'); ?>" method="post" >
+                    	<textarea name="message" required></textarea>
+                        <input type="hidden" name="receiver_id" value="<?php echo $_message_details->getSenderId(); ?>" />
+                        <input type="hidden" name="product_id" value="<?php echo $_message_details->getProductId(); ?>" />
+                        <input type="hidden" name="parent_id" value="<?php echo $this->getRequest()->getParam('id'); ?>" />
+                        
+                        <a href="#" class="button send" onclick="ajaxmessage('popup','messagesend','<?php echo $this->getUrl('message/index/send/'); ?>'); return false;"> <?php echo __('To send');?></a>
+                    </form>
+                    
+                </div>
+                
+                <div class="element_to_pop_up element_to_pop_up3" id="popup" style="display: none; background: #fff; width: 845px; height: 600px;">
+                    <div class="close">X</div>
+                    <div class="content">
+                    <div class="loading-text" style="display: none;"></div>
+                    <div class="element_to_pop_up2 message_pop_up" style="display: none;">
+                            <div class="icon-success"></div>
+                            <div class="success-text"><?php /* @escapeNotVerified */ echo __('Massage successfully sent!'); ?></div>
+                            <div class="close-button close" onClick="window.location.reload()"><?php /* @escapeNotVerified */ echo __('close'); ?></div>
+                    </div>
+                    </div>
+                </div>
+            </li>
+            </ul>
+            <?php else: ?> 
+            <ul class="submessage">            
+                This conversation doesn't have any reply 
+            </ul>                
+            <?php endif; ?>
+
+</div>
+<div class="element_to_pop_up element_to_pop_up3" id="popup" style="display: none; background: #fff; width: 845px; height: 600px;">
+    <div class="close">X</div>
+    <div class="content">
+    <div class="loading-text" style="display: none;"></div>
+    <div class="element_to_pop_up2 message_pop_up" style="display: none;">
+            <div class="icon-success"></div>
+            <div class="success-text"><?php /* @escapeNotVerified */ echo __('Massage successfully Delete!'); ?></div>
+            <div class="close-button close" onclick="return btntest_onclick()"><?php /* @escapeNotVerified */ echo __('close'); ?></div>
+    </div>
+    </div>
+</div>
+
+<?php 
+    $this->read_message();  
+    $this->printMessage();
+?>        
+        
+<script type="text/javascript">
+    function btntest_onclick() 
+    {
+        window.location.href = "<?php echo $this->getUrl('message'); ?>";
+    }
+    
+    require([ 'jquery'], function($){
+        
+        jQuery("#allselect").click(function () { 
+            jQuery(".selectmessage").prop('checked', jQuery(this).prop('checked'));
+        });
+        
+        jQuery("#check").click(function () {
+            jQuery("#check-hidden").prop('checked', jQuery(this).prop('checked'));
+        });
+        
+    });
+    
+
+    
+    
+    require(['jquery'], function($){
+    $('.form .submit').click(function(){
+
+
+                $('.element_to_pop_up3').bPopup({
+                    closeClass:'close',
+                    positionStyle: 'fixed'
+                });
+                
+                $('.message_pop_up').css('display','none');
+                var frm = $('#contact-form');
+                frm.submit(function (e) {
+                    $('.loading-text').css('display','block');
+                    e.preventDefault();
+            
+                    $.ajax({
+                        type: frm.attr('method'),
+                        url: frm.attr('action'),
+                        data: frm.serialize(),
+                        success: function (data) {
+                          $('.loading-text').css('display','none');
+                          $('.message_pop_up').css('display','block');
+                        }
+                    });
+                });
+            
+    });
+    });
+</script>
+<style type="text/css">
+    .page-title-wrapper{display:none}
+</style>
+
+

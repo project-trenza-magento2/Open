@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Trenza_Message::message" title="Message" module="Trenza_Message" sortOrder="30" resource="Trenza_Message::message"/>
+        <add id="Trenza_Message::message_settings" title="Message Settings" module="Trenza_Message" sortOrder="10" parent="Trenza_Message::message" action="adminhtml/system_config/edit/section/message_settings" resource="Trenza_Message::config"/>
+
+        <add id="Trenza_Message::messageview" title="Message View" module="Trenza_Message" sortOrder="10" parent="Trenza_Message::message" action="messageview/index/" resource="Trenza_Message::messageview"/>
+
+    </menu>
+</config>

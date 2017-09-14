@@ -1,0 +1,64 @@
+<div class="header-login">
+<ul>
+    <li><a href="#">log in</a></li>
+    <li><a href="#">register</a></li>
+</ul>
+
+<ul class="incl-vat">
+    <li id="incl-price" class="active">Incl. BTW</li>
+    <li id="excl-price">Excl. BTW</li>
+</ul>
+
+</div>
+
+
+<script>
+  require([
+    'jquery'
+    ], function ($) {
+        $(document).ready(function() {
+
+          //Excl prijs standaard verbergen
+          $(".price-excluding-tax").hide();
+
+          // Excl prijs knop
+          $("#excl-price" ).click(function() {
+            alert( "Prijzen worden vanaf nu Excl. BTW getoond" );
+            $(".price-excluding-tax").show();
+            $(".price-including-tax").hide();
+
+            // Add css clas for active statement
+            $('#excl-price').addClass('active');
+            $('#incl-price').removeClass('active');
+
+            // Set localstorage
+            localStorage.setItem('tax','tax-off');
+          });
+
+          // Incl prijs knop
+          $("#incl-price" ).click(function() {
+            alert( "Prijzen worden vanaf nu Incl. BTW getoond" );
+            $(".price-excluding-tax").hide();
+            $(".price-including-tax").show();
+
+            // Add css clas for active statement
+            $('#excl-price').removeClass('active');
+            $('#incl-price').addClass('active');
+
+            // Set localStorage
+            localStorage.setItem('tax','tax-on');
+          });
+
+          // Conditional statement
+          var taxsetting = localStorage.getItem('tax');
+          if(taxsetting == 'tax-off') {
+            $(".price-excluding-tax").show();
+            $(".price-including-tax").hide();
+          } else {
+            $(".price-excluding-tax").hide();
+            $(".price-including-tax").show();
+          }
+
+        });
+   });
+</script>
